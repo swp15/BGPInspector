@@ -1,0 +1,60 @@
+{% extends 'bgpWebApp/base.html' %}
+
+{% block title %}Query{% endblock %}
+{% block headers %}
+	<!-- DataTables CSS -->
+	<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.css">
+  
+	<!-- jQuery -->
+	<script type="text/javascript" charset="utf8" src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+  
+	<!-- DataTables -->
+	<script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.js"></script>
+{% endblock %}
+{% block content %}
+	<h1> Enter your VAST query:</h1>
+	<form action="{% url 'bgpWebApp:query' %}" method="post">
+		{% csrf_token %}
+		{{ form }}	
+	</form>
+	
+	<div class="result">
+		{% if query != None %}
+			<hr>
+			{% if is_json %}
+				<table class="result_table display" id="result_table">
+					<thead>
+					<tr>
+					{% for title in content_json.header %}
+						<th>{{ title }}</th>
+					{% endfor %}
+					</tr>
+					</thead>
+					<tbody>
+					{% for row in content_json.table %}
+						<tr>
+							{% for entry in row %}
+								<td> {{ entry }}</td>
+							{% endfor %}
+						</tr>
+					{% endfor %}
+					</tbody>
+				</table>
+					</div>
+				</div>
+			{% endif %}
+			<script>
+				$(document).ready(function() {
+					$('#result_table').DataTable();
+				});	
+			</script>				
+			{% if not is_json %}
+				<h1> No json result!</h1>
+				<div id="found">
+					For your query: {{ query }} <br>
+					We just found this: {{ content_text }}
+				</div>
+			{% endif %}
+		{% endif %}
+	</div>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends 'bgpWebApp/query.html' %}
+
+{% block content %}
+	{% if is_json %}
+			<h1> We have found some JSON! </h1>
+		<div class="result">
+			<div class="result_meta">
+				<ul>
+					<li>Your query: {{ query }}</li>
+					<li>Request timestamp: {{ time }}</li>
+				</ul>
+			</div>
+			<div class="result_table">
+				<table class="table">
+					<tr>
+					{% for title in content_json.header %}
+						<th>{{ title }}</th>
+					{% endfor %}
+					</tr>
+					{% for row in content_json.table %}
+						<tr>
+							{% for entry in row %}
+								<td> {{ entry }}</td>
+							{% endfor %}
+						</tr>
+					{% endfor %}
+				</ul>
+			</div>
+		</div>
+	{% endif %}
+
+	{% if not is_json %}
+		<h1> No json result!</h1>
+
+		<div id="found">
+			For your query: {{ query }} <br>
+			We just found this: {{ content_text }}
+		</div>
+{% endif %}
+{% endblock %}
