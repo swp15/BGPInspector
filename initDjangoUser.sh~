@@ -1,0 +1,4 @@
+#!/bin/sh
+
+source django-user/bin/activate
+echo "You are now in virtualenv"

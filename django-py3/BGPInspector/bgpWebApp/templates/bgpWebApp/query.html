@@ -25,13 +25,13 @@
 				<table class="result_table display" id="result_table">
 					<thead>
 					<tr>
-					{% for title in content_json.header %}
+					{% for title in http_json_content.header %}
 						<th>{{ title }}</th>
 					{% endfor %}
 					</tr>
 					</thead>
 					<tbody>
-					{% for row in content_json.table %}
+					{% for row in http_json_content.table %}
 						<tr>
 							{% for entry in row %}
 								<td> {{ entry }}</td>
