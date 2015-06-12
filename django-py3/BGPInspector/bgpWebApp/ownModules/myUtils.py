@@ -1,8 +1,6 @@
 #!python3
 __author__ = 'Fabrice Jean Ryba'
 
-import ijson
-
 def parse_json_to_table_format( content_json):
 	header = ['timestamp', 'source_ip', 'source_as', 'prefix', 'as_path', 'origin_as', 'origin', 'nexthop', 'local_pref', 'med', 'community', 'atomix_aggregate', 'aggregator'] #= content_json['header']
 	table = []
