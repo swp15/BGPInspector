@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '+_l#+x3fn!zdlnch&zz60!xycmbil7p@*3-gtbku1)m)v8y=c5'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = [
 	#'.ddns.net'
@@ -106,7 +106,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 # own stuff
-STATICFILES_DIRS = [ 
-	'/usr/local/lib/BGPInspector/django-py3/BGPInspector/bgpWebApp/media/'
-]
-STATIC_ROOT = '/usr/local/lib/BGPInspector/django-py3/BGPInspector/bgpWebApp/media/'
+#STATICFILES_DIRS = [ 
+#	'/usr/local/lib/BGPInspector/django-py3/BGPInspector/bgpWebApp/media/'
+#]
+# STATIC_ROOT = '/usr/local/lib/BGPInspector/django-py3/BGPInspector/bgpWebApp/media/'
