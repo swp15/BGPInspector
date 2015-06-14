@@ -39,7 +39,9 @@ def query(request):
 					content_emitter['http_content'] = http_content
 	
 				elif 'graph' in request.POST:
+					http_content = myUtils.parse_json_to_graph_format( content_emitter['http_content'])
 					content_emitter['representation'] = 'graph'
+					content_emitter['http_content'] = http_content
 			
 			else:
 				content_emitter['representation'] = 'text'

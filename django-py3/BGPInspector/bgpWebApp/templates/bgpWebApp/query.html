@@ -9,9 +9,8 @@
 	<form action="{% url 'bgpWebApp:query' %}" method="post">
 		{% csrf_token %}
 		{{ form }}
-		<input type="submit" value="Table" name="table"></td>
-		<td><input type="submit" value="Graph" name="graph"</td>
-		</tr>
+		<input type="submit" value="Table" name="table">
+		<input type="submit" value="Graph" name="graph">
 	</form>
 	
 	<div class="result">
@@ -53,18 +52,14 @@
 				<div id="network_graph"></div>
 				<script type="text/javascript">
 					var nodes = new vis.DataSet([
-					{% for row in http_json_content.table %}
-						{% for entry in row %}
-						{% endfor %}
-					{% endfor %}			
-						
-						{id: 1, label: 'Node1'},
-						{id: 2, label: 'Node2'},
-						{id: 3, label: 'Node3'}
+						{% for AS in http_content.nodes %}
+							{id: {{ AS }}, label: '{{ AS }}' },
+						{% endfor %}			
 					]);
 					var edges = new vis.DataSet([
-						{from: 1, to:2},
-						{from: 2, to:3}
+						{% for edge in http_content.edges %}
+							{from: {{ edge.0 }}, to: {{ edge.1 }}},
+						{% endfor %}
 					])
 				var container = document.getElementById('network_graph');
 				var data = { nodes: nodes, edges: edges};

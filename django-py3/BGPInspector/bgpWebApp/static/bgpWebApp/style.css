@@ -60,7 +60,7 @@ hr {
 /* for VisJS */
 #network_graph {
 	display: inline-block;
-	width: 600px;
-	height: 400px;
+	width: 100em;
+	height: 60em;
 	border: 1px solid lightgray;
 }

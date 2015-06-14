@@ -20,4 +20,19 @@ def parse_json_to_table_format( content_json):
 			table.append( value_row)				
 	return {'header':header, 'table':table}
 	
+def parse_json_to_graph_format( content_json):
+	nodes = []
+	edges = []
+	for json_object in content_json:
+		if 'type' in json_object['value'] and json_object['value']['type'] == 'bgpdump::announcement':	
+			hop_list = json_object['value']['data'][4]
+			prev_as = None
+			for AS in hop_list:
+				if AS not in nodes:
+					nodes.append( AS)
+				if prev_as != None:
+					edges.append( (prev_as, AS))
+				prev_as = AS
+	return {'nodes': nodes, 'edges': edges}   				
+			
 
