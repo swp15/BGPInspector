@@ -61,7 +61,7 @@ def build_content_emitter( query, form):
 
 def load_and_parse( response):
 	# ------------------- test ------------------------- #
-	with open( static('json_bgp_small.dump')) as json_file:
+	with open( 'bgpWebApp/media/json_bgp_small.dump') as json_file:
 		http_json_content = json.load(json_file)
 	# -------------------------------------------------- #
 	http_json_content = myUtils.parse_json_to_table_format( http_json_content)
