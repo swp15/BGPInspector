@@ -8,6 +8,7 @@ from django.template import RequestContext, loader
 from django.core.urlresolvers import reverse
 import datetime
 
+from django.templatetags.static import static
 from .forms import QueryForm
 from .ownModules import myUtils, HTTPHandler
 
@@ -60,7 +61,7 @@ def build_content_emitter( query, form):
 
 def load_and_parse( response):
 	# ------------------- test ------------------------- #
-	with open( 'bgpWebApp/media/json_bgp_small.dump') as json_file:
+	with open( static('json_bgp_small.dump')) as json_file:
 		http_json_content = json.load(json_file)
 	# -------------------------------------------------- #
 	http_json_content = myUtils.parse_json_to_table_format( http_json_content)
