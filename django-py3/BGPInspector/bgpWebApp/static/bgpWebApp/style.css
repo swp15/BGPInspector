@@ -56,3 +56,11 @@ hr {
 	height: 0.2em;
 	background: #717171;
 }
+
+/* for VisJS */
+#network_graph {
+	display: inline-block;
+	width: 600px;
+	height: 400px;
+	border: 1px solid lightgray;
+}

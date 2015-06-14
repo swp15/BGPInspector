@@ -1,37 +1,35 @@
 {% extends 'bgpWebApp/base.html' %}
 
 {% block title %}Query{% endblock %}
-{% block headers %}
-	<!-- DataTables CSS -->
-	<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.css">
-  
-	<!-- jQuery -->
-	<script type="text/javascript" charset="utf8" src="//code.jquery.com/jquery-1.10.2.min.js"></script>
-  
-	<!-- DataTables -->
-	<script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.js"></script>
-{% endblock %}
+
+{% block headers %}{% endblock %}
+
 {% block content %}
 	<h1> Enter your VAST query:</h1>
 	<form action="{% url 'bgpWebApp:query' %}" method="post">
 		{% csrf_token %}
-		{{ form }}	
+		{{ form }}
+		<input type="submit" value="Table" name="table"></td>
+		<td><input type="submit" value="Graph" name="graph"</td>
+		</tr>
 	</form>
 	
 	<div class="result">
 		{% if query != None %}
 			<hr>
-			{% if is_json %}
+
+			<!-- TABLE -->
+			{% if is_json and representation == 'table'  %}
 				<table class="result_table display" id="result_table">
 					<thead>
 					<tr>
-					{% for title in http_json_content.header %}
+					{% for title in http_content.header %}
 						<th>{{ title }}</th>
 					{% endfor %}
 					</tr>
 					</thead>
 					<tbody>
-					{% for row in http_json_content.table %}
+					{% for row in http_content.table %}
 						<tr>
 							{% for entry in row %}
 								<td> {{ entry }}</td>
@@ -42,19 +40,48 @@
 				</table>
 					</div>
 				</div>
+				<script>
+					$(document).ready(function() {
+						$('#result_table').DataTable();
+					});	
+				</script>	
+			{% endif %}		
+	
+			<!-- GRAPH -->
+			{% if is_json and representation == 'graph' %}
+				<h1> Make a graph god damn!</h1>
+				<div id="network_graph"></div>
+				<script type="text/javascript">
+					var nodes = new vis.DataSet([
+					{% for row in http_json_content.table %}
+						{% for entry in row %}
+						{% endfor %}
+					{% endfor %}			
+						
+						{id: 1, label: 'Node1'},
+						{id: 2, label: 'Node2'},
+						{id: 3, label: 'Node3'}
+					]);
+					var edges = new vis.DataSet([
+						{from: 1, to:2},
+						{from: 2, to:3}
+					])
+				var container = document.getElementById('network_graph');
+				var data = { nodes: nodes, edges: edges};
+				var options = {}
+				var newtwork = new vis.Network(container, data, options);
+			</script>
 			{% endif %}
-			<script>
-				$(document).ready(function() {
-					$('#result_table').DataTable();
-				});	
-			</script>				
-			{% if not is_json %}
+
+			<!-- EVERYTHING ELSE -->
+			{% if not is_json and representation == 'text' %}
 				<h1> No json result!</h1>
 				<div id="found">
 					For your query: {{ query }} <br>
 					We just found this: {{ content_text }}
 				</div>
 			{% endif %}
+
 		{% endif %}
 	</div>
 {% endblock %}

@@ -19,53 +19,66 @@ import json
 
 def index(request):
 	userIp = request.META['REMOTE_ADDR']
-	context = {'userIp': userIp}
-	return render(request, 'bgpWebApp/index.html', context)
+	content_emitter = {'userIp': userIp}
+	return render(request, 'bgpWebApp/index.html', content_emitter)
 
 def query(request):
-	# retrieve cookie?
 	if request.method == "POST":
 		form = QueryForm(request.POST)
-		if form.is_valid():	
-			query = form.cleaned_data['query']
-			httpHandler = HTTPHandler.HTTPHandler()
-			response = httpHandler.send_request(
-				'GET', 
-				'http://worldcup-simulator.de/json/rules/tournament:1', 
-				request_payload={'query':query})
-			content_emitter = build_content_emitter( query, form)
-			if httpHandler.is_json( response):
-				http_json_content = httpHandler.extract_json_content( response)
-				#import cProfile;cProfile.runctx('load_and_parse( response)', {'response' : response}, None )#cProfile.run('load_and_parse( response)')
-				http_json_content = load_and_parse( response)
-				content_emitter['http_json_content'] = http_json_content
-				content_emitter['is_json'] = True
-			else: 	
-				http_content = httpHandler.extract_text_content( response)
-				content_emitter['http_content'] = http_content
-				content_emitter['is_json'] = False
+		if form.is_valid():
+			content_emitter = process_query_from_form( form)
+
+			if content_emitter['is_json'] == True:
+				# ------------------- test ------------------------- #
+				with open( 'bgpWebApp/media/json_bgp_small.dump') as json_file:
+					content_emitter['http_content'] = json.load(json_file)
+				# -------------------------------------------------- #
+				if 'table' in request.POST:
+					http_content = myUtils.parse_json_to_table_format( content_emitter['http_content'])
+					content_emitter['representation'] = 'table'
+					content_emitter['http_content'] = http_content
+	
+				elif 'graph' in request.POST:
+					content_emitter['representation'] = 'graph'
+			
+			else:
+				content_emitter['representation'] = 'text'
+
 			return render(request, 'bgpWebApp/query.html', content_emitter)
 	else:
 		form = QueryForm()
 	return render(request, 'bgpWebApp/query.html', {'form':form})
 
+def process_query_from_form( form):
+	query = form.cleaned_data['query']
+	httpHandler = HTTPHandler.HTTPHandler()
+	response = httpHandler.send_request(
+		'GET', 
+		'http://worldcup-simulator.de/json/rules/tournament:1', 
+		request_payload={'query':query}
+	)
+	content_emitter = build_content_emitter( query, form)
+	
+	http_content = None
+	if httpHandler.is_json( response):
+		http_content = httpHandler.extract_json_content( response)			
+		content_emitter['is_json'] = True
+	else: 	
+		http_content = httpHandler.extract_text_content( response)
+		content_emitter['is_json'] = False
+
+	content_emitter['http_content'] = http_content
+
+	return content_emitter
+
 def build_content_emitter( query, form):
 	content_emitter = {}
 	time = datetime.datetime.now()
 	time = str(time)
-	content_emitter = {}
 	content_emitter['query'] = query
 	content_emitter['time'] = time
 	content_emitter['form'] = form
 	return content_emitter
-
-def load_and_parse( response):
-	# ------------------- test ------------------------- #
-	with open( 'bgpWebApp/media/json_bgp_small.dump') as json_file:
-		http_json_content = json.load(json_file)
-	# -------------------------------------------------- #
-	http_json_content = myUtils.parse_json_to_table_format( http_json_content)
-	return http_json_content
 
 def result(request):
 	return render( request, 'bgpWebApp/result.html', {})
