@@ -30,8 +30,8 @@ def query(request):
 
 			if content_emitter['is_json'] == True:
 				# ------------------- test ------------------------- #
-				with open( 'bgpWebApp/media/json_bgp_small.dump') as json_file:
-					content_emitter['http_content'] = json.load(json_file)
+				#with open( 'bgpWebApp/media/json_bgp_small.dump') as json_file:
+				#	content_emitter['http_content'] = json.load(json_file)
 				# -------------------------------------------------- #
 				if 'table' in request.POST:
 					http_content = myUtils.parse_json_to_table_format( content_emitter['http_content'])
@@ -56,7 +56,7 @@ def process_query_from_form( form):
 	httpHandler = HTTPHandler.HTTPHandler()
 	response = httpHandler.send_request(
 		'GET', 
-		'http://worldcup-simulator.de/json/rules/tournament:1', 
+		'http://fabrice-ryba.ddns.net/json_bgp_small.dump', 
 		request_payload={'query':query}
 	)
 	content_emitter = build_content_emitter( query, form)
