@@ -12,9 +12,6 @@ from django.templatetags.static import static
 from .forms import QueryForm
 from .ownModules import myUtils, HTTPHandler
 
-# for testing json
-import json
-
 # Create your views here.
 
 def index(request):
@@ -29,10 +26,6 @@ def query(request):
 			content_emitter = process_query_from_form( form)
 
 			if content_emitter['is_json'] == True:
-				# ------------------- test ------------------------- #
-				#with open( 'bgpWebApp/media/json_bgp_small.dump') as json_file:
-				#	content_emitter['http_content'] = json.load(json_file)
-				# -------------------------------------------------- #
 				if 'table' in request.POST:
 					http_content = myUtils.parse_json_to_table_format( content_emitter['http_content'])
 					content_emitter['representation'] = 'table'
