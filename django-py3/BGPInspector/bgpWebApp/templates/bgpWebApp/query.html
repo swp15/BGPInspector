@@ -50,21 +50,8 @@
 			{% if is_json and representation == 'graph' %}
 				<div id="network_graph"></div>
 				<script type="text/javascript">
-					var nodes = new vis.DataSet([
-						{% for AS in http_content.nodes %}
-							{id: {{ AS }}, label: '{{ AS }}' },
-						{% endfor %}			
-					]);
-					var edges = new vis.DataSet([
-						{% for edge in http_content.edges %}
-							{from: {{ edge.0 }}, to: {{ edge.1 }}},
-						{% endfor %}
-					])
-				var container = document.getElementById('network_graph');
-				var data = { nodes: nodes, edges: edges};
-				var options = {}
-				var newtwork = new vis.Network(container, data, options);
-			</script>
+					{% include 'bgpWebApp/graph.html' %}
+				</script>
 			{% endif %}
 
 			<!-- EVERYTHING ELSE -->
