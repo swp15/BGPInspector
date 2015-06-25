@@ -35,4 +35,32 @@ def parse_json_to_graph_format( content_json):
 				prev_as = AS
 	return {'nodes': nodes, 'edges': edges}   				
 			
+def query_to_url_para_dic( query_string):
+	query = ''
+	options = []
+	last_char = ''
+	current_option = ''
+	option_mode_on = False
+	for char in query_string:
+		if ((char == '-') and (last_char == ' ')):
+			option_mode_on = True
+			current_option += char
+		elif option_mode_on and (char == ' '):
+			options.append( current_option)
+			current_option = ''
+		elif option_mode_on:
+			current_option += char
+		else:
+			query += char
+		last_char = char
+	
+	if current_option != '':
+		options.append( current_option)
 
+	params = {'query':query}
+	if options != []:
+		counter = 0
+		for option in options:
+			counter += 1
+			params['option'+str(counter)] = option
+	return params 

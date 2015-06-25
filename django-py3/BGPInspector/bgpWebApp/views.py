@@ -46,11 +46,12 @@ def query(request):
 
 def process_query_from_form( form):
 	query = form.cleaned_data['query']
+	params = myUtils.query_to_url_para_dic( query)
 	httpHandler = HTTPHandler.HTTPHandler()
 	response = httpHandler.send_request(
 		'GET', 
 		'http://fabrice-ryba.ddns.net/json_bgp_small.dump', 
-		request_payload={'query':query}
+		request_payload=params
 	)
 	content_emitter = build_content_emitter( query, form)
 	
