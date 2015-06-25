@@ -46,6 +46,7 @@ def query(request):
 
 def process_query_from_form( form):
 	query = form.cleaned_data['query']
+	# change to test github issues + commit
 	params = myUtils.query_to_url_para_dic( query)
 	httpHandler = HTTPHandler.HTTPHandler()
 	response = httpHandler.send_request(
