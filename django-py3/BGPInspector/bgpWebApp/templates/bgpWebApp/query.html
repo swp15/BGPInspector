@@ -14,6 +14,13 @@
 		<input type="submit" value="Table" name="table">
 		<input type="submit" value="Graph" name="graph">
 	</form>
+
+	{% if http_conten.header %}
+	<form action="{% url 'bgpWebApp:query' %}" method="post">
+		{% csrf_token %}
+		{{ Field_filters }}
+	</form>
+	{% endif %}
 	
 	<div class="result">
 		{% if query != None %}
