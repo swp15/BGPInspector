@@ -9,7 +9,7 @@ from django.core.urlresolvers import reverse
 import datetime
 
 from django.templatetags.static import static
-from .forms import QueryForm
+from .forms import Query_form
 from .ownModules import myUtils, HTTPHandler
 
 # Create your views here.
@@ -20,33 +20,53 @@ def index(request):
 	return render(request, 'bgpWebApp/index.html', content_emitter)
 
 def query(request):
+	content_emitter = None
 	if request.method == "POST":
-		form = QueryForm(request.POST)
-		if form.is_valid():
-			content_emitter = process_query_from_form( form)
-
-			if content_emitter['is_json'] == True:
-				if 'table' in request.POST:
-					http_content = myUtils.parse_json_to_table_format( content_emitter['http_content'])
-					content_emitter['representation'] = 'table'
-					content_emitter['http_content'] = http_content
-	
-				elif 'graph' in request.POST:
-					http_content = myUtils.parse_json_to_graph_format( content_emitter['http_content'])
-					content_emitter['representation'] = 'graph'
-					content_emitter['http_content'] = http_content
-			
-			else:
-				content_emitter['representation'] = 'text'
-
-			return render(request, 'bgpWebApp/query.html', content_emitter)
+		query_form = Query_form(request.POST)
+		content_emitter = {'query_form':query_form}
+		if query_form.is_valid():
+			content_emitter.update(process_vast_query( query_form, request))
 	else:
-		form = QueryForm()
-	return render(request, 'bgpWebApp/query.html', {'form':form})
+		query_form = Query_form()
+		content_emitter = {'query_form':query_form}
+	return render(request, 'bgpWebApp/query.html', content_emitter )
+
+def process_vast_query( form, request):
+		headers = process_protocoly_from_form( form.cleaned_data['protocol'])
+		content_emitter = process_query_from_form( form)
+
+		if content_emitter['is_json'] == True:
+			if 'table' in request.POST:
+				http_content = myUtils.parse_json_to_table_format( content_emitter['http_content'])
+				content_emitter['representation'] = 'table'
+				http_content['header'] = headers
+				content_emitter['http_content'] = http_content
+			
+
+			elif 'graph' in request.POST:
+				http_content = myUtils.parse_json_to_graph_format( content_emitter['http_content'])
+				content_emitter['representation'] = 'graph'
+				http_content['header'] = headers
+				content_emitter['http_content'] = http_content
+		
+		else:
+			content_emitter['representation'] = 'text'
+		#print( content_emitter)
+		return content_emitter
+
+def process_protocoly_from_form( protocol):
+	httpHandler = HTTPHandler.HTTPHandler()
+	params = {'protocol':protocol}
+	response = httpHandler.send_request( 
+		'GET',
+		'http://fabrice-ryba.ddns.net/json_bgp_header.dump',
+		request_payload = params
+	)
+	headers = httpHandler.extract_json_content( response)
+	return headers
 
 def process_query_from_form( form):
 	query = form.cleaned_data['query']
-	# change to test github issues + commit
 	params = myUtils.query_to_url_para_dic( query)
 	httpHandler = HTTPHandler.HTTPHandler()
 	response = httpHandler.send_request(
@@ -74,7 +94,6 @@ def build_content_emitter( query, form):
 	time = str(time)
 	content_emitter['query'] = query
 	content_emitter['time'] = time
-	content_emitter['form'] = form
 	return content_emitter
 
 def result(request):

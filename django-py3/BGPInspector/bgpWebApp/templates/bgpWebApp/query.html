@@ -5,10 +5,12 @@
 {% block headers %}{% endblock %}
 
 {% block content %}
-	<h1> Enter your VAST query:</h1>
+	<h1>Enter your VAST query:</h1>
+
+
 	<form action="{% url 'bgpWebApp:query' %}" method="post">
 		{% csrf_token %}
-		{{ form }}
+		{{ query_form }}
 		<input type="submit" value="Table" name="table">
 		<input type="submit" value="Graph" name="graph">
 	</form>

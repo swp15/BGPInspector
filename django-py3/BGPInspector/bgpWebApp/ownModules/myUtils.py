@@ -2,7 +2,7 @@
 __author__ = 'Fabrice Jean Ryba'
 
 def parse_json_to_table_format( content_json):
-	header = ['timestamp', 'source_ip', 'source_as', 'prefix', 'as_path', 'origin_as', 'origin', 'nexthop', 'local_pref', 'med', 'community', 'atomix_aggregate', 'aggregator'] #= content_json['header']
+	#header = ['timestamp', 'source_ip', 'source_as', 'prefix', 'as_path', 'origin_as', 'origin', 'nexthop', 'local_pref', 'med', 'community', 'atomix_aggregate', 'aggregator'] #= content_json['header']
 	table = []
 	for json_object in content_json:
 		if 'type' in json_object['value'] and json_object['value']['type'] == 'bgpdump::announcement':
@@ -18,7 +18,7 @@ def parse_json_to_table_format( content_json):
 						stringBuff += str(entry) + ' '
 					value_row.append( stringBuff)
 			table.append( value_row)				
-	return {'header':header, 'table':table}
+	return {'table':table}
 	
 def parse_json_to_graph_format( content_json):
 	nodes = []
