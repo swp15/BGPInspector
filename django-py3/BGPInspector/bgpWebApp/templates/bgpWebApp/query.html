@@ -7,7 +7,6 @@
 {% block content %}
 	<h1>Enter your VAST query</h1>
 
-
 	<form action="{% url 'bgpWebApp:query' %}" method="post">
 		{% csrf_token %}
 		{{ query_form }}

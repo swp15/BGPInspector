@@ -10,3 +10,4 @@ class Field_filter(forms.Form):
 		self.fields['field'].choices = field_choices
 
 	field = forms.ChoiceField(label="", initial=None, choices=('filter'), required=False)
+
