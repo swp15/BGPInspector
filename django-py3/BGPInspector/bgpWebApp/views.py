@@ -21,14 +21,24 @@ def index(request):
 
 def query(request):
 	content_emitter = None
-	if request.method == "POST":
-		query_form = Query_form(request.POST)
+	if request.method == "POST":		
+		query_form = Query_form( None, request.POST)
+		#print( query_form.cleaned_data['protocol'])
 		content_emitter = {'query_form':query_form}
 		if query_form.is_valid():
 			content_emitter.update(process_vast_query( query_form, request))
+			if 'headers' in content_emitter['http_content']:
+				converted_headers = convert_list_to_list_of_tuples( 
+					content_emitter['http_content']['headers']
+				)
+				content_emitter['query_form'] = Query_form(  
+					converted_headers,
+					request.POST
+				)
 	else:
-		query_form = Query_form()
+		query_form = Query_form(None)
 		content_emitter = {'query_form':query_form}
+	#print( content_emitter['query_form'])
 	return render(request, 'bgpWebApp/query.html', content_emitter )
 
 def process_vast_query( form, request):
@@ -39,19 +49,16 @@ def process_vast_query( form, request):
 			if 'table' in request.POST:
 				http_content = myUtils.parse_json_to_table_format( content_emitter['http_content'])
 				content_emitter['representation'] = 'table'
-				http_content['header'] = headers
+				http_content['headers'] = headers
 				content_emitter['http_content'] = http_content
-			
-
 			elif 'graph' in request.POST:
 				http_content = myUtils.parse_json_to_graph_format( content_emitter['http_content'])
 				content_emitter['representation'] = 'graph'
-				http_content['header'] = headers
+				http_content['headers'] = headers
 				content_emitter['http_content'] = http_content
-		
+
 		else:
 			content_emitter['representation'] = 'text'
-		#print( content_emitter)
 		return content_emitter
 
 def process_protocoly_from_form( protocol):
@@ -95,6 +102,12 @@ def build_content_emitter( query, form):
 	content_emitter['query'] = query
 	content_emitter['time'] = time
 	return content_emitter
+
+def convert_list_to_list_of_tuples( list):
+	out_list = []
+	for entry in list:
+		out_list.append( (entry, entry))
+	return out_list
 
 def result(request):
 	return render( request, 'bgpWebApp/result.html', {})

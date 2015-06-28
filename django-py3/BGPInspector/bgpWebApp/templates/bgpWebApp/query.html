@@ -8,18 +8,14 @@
 	<h1>Enter your VAST query</h1>
 
 	<form action="{% url 'bgpWebApp:query' %}" method="post">
+	</form>
+
+	<form action="{% url 'bgpWebApp:query' %}" method="post">
 		{% csrf_token %}
 		{{ query_form }}
 		<input type="submit" value="Table" name="table">
 		<input type="submit" value="Graph" name="graph">
 	</form>
-
-	{% if http_conten.header %}
-	<form action="{% url 'bgpWebApp:query' %}" method="post">
-		{% csrf_token %}
-		{{ Field_filters }}
-	</form>
-	{% endif %}
 	
 	<div class="result">
 		{% if query != None %}
@@ -30,7 +26,7 @@
 				<table class="result_table display" id="result_table">
 					<thead>
 					<tr>
-					{% for title in http_content.header %}
+					{% for title in http_content.headers %}
 						<th>{{ title }}</th>
 					{% endfor %}
 					</tr>
