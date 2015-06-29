@@ -5,11 +5,6 @@ from django.shortcuts import render
 
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.template import RequestContext, loader
-from django.core.urlresolvers import reverse
-
-from django.templatetags.static import static
-from .forms import Query_form
-from .ownModules import query_handler
 
 # Create your views here.
 
