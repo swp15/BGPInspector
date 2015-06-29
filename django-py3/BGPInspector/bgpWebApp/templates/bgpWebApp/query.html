@@ -7,10 +7,7 @@
 {% block content %}
 	<h1>Enter your VAST query</h1>
 
-	<form action="{% url 'bgpWebApp:query' %}" method="post">
-	</form>
-
-	<form action="{% url 'bgpWebApp:query' %}" method="post">
+	<form action="{% url 'bgpWebApp:query' url_protocol %}" method="post">
 		{% csrf_token %}
 		{{ query_form }}
 		<input type="submit" value="Table" name="table">
