@@ -19,6 +19,6 @@ Testing:
 - cd BGPInspector 
 - . ./initDjangoUser.sh
 - cd django-py3/BGPInspector
-- ./startVirtServer.sh (The webapp should be running unter 'http://127.0.0.1:8000/applications/bgpWebApp/')
+- ./startVirtServer.sh (The webapp should be running unter 'http://127.0.0.1:8000/bgpWebApp/')
 
 Feedback is always appreciated!
