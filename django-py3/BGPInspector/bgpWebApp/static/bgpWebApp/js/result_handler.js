@@ -11,15 +11,15 @@ function send_query(query, representation, headers){
    url: 'http://mobi3.cpt.haw-hamburg.de/API/query?query='+query+'&historical=true&limit=100',
    withCredentials: false
 	})
-	.done(
-		function(json_object) {
-			//console.log(json_object.value.data);
+	.node(
+		'value.*', function(value) {
+			console.log(value);
 			if (representation == 'table'){
-				var data_list = json_object.value.data;	
+				var data_list = value;	
 				var diff =  headers.length - data_list.length;
 				if (diff > 0) {
 					for(i=0; i < diff; i++){
-						data_list.push("-");
+						data_list.push("");
 					}
 				}
 				//console.log(data_list);
