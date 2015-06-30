@@ -5,11 +5,16 @@
 
 {% block headers %}
 <script src={% static 'bgpWebApp/js/oboe-browser.js' %}>
-</script>{% endblock %}
+</script>
+{% endblock %}
 
 
 {% block content %}
 	<h1>Enter your VAST query</h1>
+	<div id="query">
+	</div>
+	<div id="result">
+	</div>
     <script src={% static 'bgpWebApp/js/result_handler.js' %}>
     </script>
     {% include 'bgpWebApp/gui.html' %}
