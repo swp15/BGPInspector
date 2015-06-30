@@ -4,7 +4,7 @@ Helpful sites for developers:
 How to close issues on github with commits?
 https://help.github.com/articles/closing-issues-via-commit-messages/
 
-# Installation + testing
+# Installation + Testing
 
 Only tested on Ubuntu 14.04 LTS
 
@@ -16,9 +16,9 @@ Install:
 
 Testing:
 
-cd BGPInspector 
-. ./initDjangoUser.sh
-cd django-py3/BGPInspector
-./startVirtServer.sh (the webapp should be running unter 'http://127.0.0.1:8000/applications/bgpWebApp/')
+- cd BGPInspector 
+- . ./initDjangoUser.sh
+- cd django-py3/BGPInspector
+- ./startVirtServer.sh (The webapp should be running unter 'http://127.0.0.1:8000/applications/bgpWebApp/')
 
 Feedback is always appreciated!
