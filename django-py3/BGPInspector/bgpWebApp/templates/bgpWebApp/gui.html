@@ -65,7 +65,8 @@ $(function() {
     });
  
 });
-
+process_query("%26time<now", 'table', ["timestamp", "source_ip", "source_as", "prefix", "as_path", "origin_as", "origin", "nexthop", "local_pref", "med", "community", "atomix_aggregate", "aggregator"]
+);
 
 $("#get_rules").click(function() {
   var a_rules = $("#demo_rules1").jui_filter_rules("getRules", 0, []);
