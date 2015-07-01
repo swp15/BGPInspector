@@ -13,16 +13,18 @@ function send_query(query, representation, headers){
 	})
 	.node(
 		'value.*', function(value) {
-			console.log(value);
+			
 			if (representation == 'table'){
-				var data_list = value;	
+				var data_list = value.data;	
 				var diff =  headers.length - data_list.length;
 				if (diff > 0) {
 					for(i=0; i < diff; i++){
 						data_list.push("");
 					}
 				}
-				//console.log(data_list);
+			}
+			if (representation == 'graph'){
+			}	
 				$(representation).DataTable().row.add(data_list).draw();
 			}
 			if (representation == 'graph'){
