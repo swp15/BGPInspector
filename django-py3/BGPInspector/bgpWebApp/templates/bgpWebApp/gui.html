@@ -1,82 +1,9 @@
+{% load static %}
 <div id="demo_rules1" style="text-align:left"></div>
 <div style="margin-top: 30px; margin-bottom: 50px;">
-                <button id="get_rules" type="button" class="btn btn-primary">Get Rules</button>
+                <button id="get_rules" type="button" class="btn btn-primary">See Query</button>
                 <button id="clear_rules" type="button" class="btn btn-primary">Clear Rules</button>
+                <button id="set_rules" type="button" class="btn btn-primary">Set Dummy Rules</button>
 </div>
-<script type="text/javascript">
-$(function() {
-    $("#demo_rules1").jui_filter_rules({
-        bootstrap_version: "3",
-        filters: [
-            {
-                filterName: "Limit", "filterType": "number", "numberType": "integer", field: "limit", filterLabel: "Max. Events",
-                excluded_operators: ["in", "not_in", "not_equal", "less", "less_or_equal", "greater", "greater_or_equal","is_null","is_not_null"],
-                filter_interface: [
-                    {
-                        filter_element: "input",
-                        filter_element_attributes: {
-                            type: "text",
-                            value: "1",
-                            "style": "width: 75px; margin: 0 5px;"
-                        },
-                        filter_widget: "spinner",
-                        filter_widget_properties: {
-                            min: 1,
-                        }
-                    }
- 
-                ]
-            },
-            {
-                filterName: "Time", "filterType": "date", field: "time", filterLabel: "Time",
-                excluded_operators: ["is_null", "is_not_null"],
-                filter_interface: [
-                    {
-                        filter_element: "input",
-                        filter_element_attributes: {
-                            type: "text",
-                            title: "Set the date and time using format: dd/mm/yyyy hh:mm:ss"
-                        },
-                        filter_widget: "datetimepicker",
-                        filter_widget_properties: {
-                            dateFormat: "dd/mm/yy",
-                            timeFormat: "HH:mm:ss",
-                            changeMonth: true,
-                            changeYear: true,
-                            showSecond: true
-                        }
-                    }
-                ],
-            },
-        ],
- 
-        onValidationError: function(event, data) {
-            console.log(data);
-            alert('wat' + data["err_description"] + ' (' + data["err_code"] + ')');
-            if(data.hasOwnProperty("elem_filter")) {
-                data.elem_filter.focus();
-            }
-        },
- 
-        onSetRules: function() {
-            show_modal($("#modal_dialog"), $("#modal_dialog_content"), "New rules have been applied.");
-            return false;
-        }
-    });
- 
-});
-process_query("%26time<now", 'table', ["timestamp", "source_ip", "source_as", "prefix", "as_path", "origin_as", "origin", "nexthop", "local_pref", "med", "community", "atomix_aggregate", "aggregator"]
-);
-
-$("#get_rules").click(function() {
-  var a_rules = $("#demo_rules1").jui_filter_rules("getRules", 0, []);
-console.log(a_rules);
-  var rules = JSON.stringify(a_rules);
-console.log(rules);
-});
-
-
-$("#clear_rules").click(function() {
-  $("#demo_rules1").jui_filter_rules("clearAllRules");
-});
+<script src="{% static 'bgpWebApp/js/query_builder.js' %}">
 </script>
