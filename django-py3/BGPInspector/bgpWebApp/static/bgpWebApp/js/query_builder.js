@@ -142,8 +142,9 @@ $(function() {
 $("#get_rules").click(function() {
   var a_rules = $("#builder").jui_filter_rules("getRules", 0, []);
   var query = buildQuery(a_rules);
-  alert("VAST QUERY: " + query);
-  process_query(escape(query), 'table', ["timestamp", "source_ip", "source_as", "prefix", "as_path", "origin_as", "origin", "nexthop", "local_pref", "med", "community", "atomix_aggregate", "aggregator"]);
+  var queryOpts = getQueryOpts();
+  alert("VAST QUERY: " + query+queryOpts);
+  process_query(escape(query)+queryOpts, 'table', ["timestamp", "source_ip", "source_as", "prefix", "as_path", "origin_as", "origin", "nexthop", "local_pref", "med", "community", "atomix_aggregate", "aggregator"]);
 });
 
 
@@ -219,7 +220,18 @@ function convert_timestamp(ts) {
     return new_ts;
 }
 
+function getQueryOpts() {
+    var atLeastOne = false;
+    var result = "";
+    ["historical","continuous","unified"].forEach(function(entry) {
+        if ($("#"+entry)[0].checked){
+           atLeastOne = true; 
+           result += "&"+entry +"=true";
+        }
+    });
 
+    return result + "&limit=" + $("#limit")[0].value;
+}
 
 
 
