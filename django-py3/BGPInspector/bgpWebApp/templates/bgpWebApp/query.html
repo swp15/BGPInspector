@@ -11,11 +11,12 @@
 
 {% block content %}
 	<h1>Enter your VAST query</h1>
+    <link rel="stylesheet" type="text/css" href="{% static 'bgpWebApp/css/query_builder.css' %}" />
 	<div id="query">
+    {% include 'bgpWebApp/gui.html' %}
 	</div>
 	<div id="result">
 	</div>
     <script src={% static 'bgpWebApp/js/result_handler.js' %}>
     </script>
-    {% include 'bgpWebApp/gui.html' %}
 {% endblock %}
