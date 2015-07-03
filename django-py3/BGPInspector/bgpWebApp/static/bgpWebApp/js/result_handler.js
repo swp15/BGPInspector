@@ -14,20 +14,19 @@ function send_query(query, representation, headers){
    withCredentials: false
 	})
 	.node(
-		'value.data', function(value) {
-			if (representation == 'table'){
-				var data_list = value;	
+		'value.data', function(data_list) {
+			if (representation == 'table'){	
 				var diff =  headers.length - data_list.length;
-				console.log(value);
-				console.log(headers.length);
+				console.log(data_list);
 				console.log(data_list.length);
+				
 				if (diff > 0) {
 					for(i=0; i < diff; i++){
 						data_list.push("");
 					}
-					$(representation).DataTable().row.add(data_list).draw();
 				}
-			}			
+				$(representation).DataTable().row.add(data_list).draw();
+			}
 			if (representation == 'graph'){
 			} 
 		}
