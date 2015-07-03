@@ -16,7 +16,7 @@ function operatorSet(ops){
 
 
 $(function() {
-    $("#demo_rules1").jui_filter_rules({
+    $("#builder").jui_filter_rules({
         bootstrap_version: "3",
         filters: [
             {
@@ -140,7 +140,7 @@ $(function() {
 });
 
 $("#get_rules").click(function() {
-  var a_rules = $("#demo_rules1").jui_filter_rules("getRules", 0, []);
+  var a_rules = $("#builder").jui_filter_rules("getRules", 0, []);
   var query = buildQuery(a_rules);
   alert("VAST QUERY: " + query);
   process_query(escape(query), 'table', ["timestamp", "source_ip", "source_as", "prefix", "as_path", "origin_as", "origin", "nexthop", "local_pref", "med", "community", "atomix_aggregate", "aggregator"]);
@@ -148,11 +148,11 @@ $("#get_rules").click(function() {
 
 
 $("#clear_rules").click(function() {
-  $("#demo_rules1").jui_filter_rules("clearAllRules");
+  $("#builder").jui_filter_rules("clearAllRules");
 });
 
 $("#set_rules").click(function() {
-  $("#demo_rules1").jui_filter_rules("setRules", dummy_rules);
+  $("#builder").jui_filter_rules("setRules", dummy_rules);
 });
 
 

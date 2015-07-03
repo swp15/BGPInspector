@@ -17,7 +17,8 @@ function send_query(query, representation, headers){
 	}
  	
 	oboe({
-   url: 'http://mobi3.cpt.haw-hamburg.de:1080/API/query?query='+query+'&historical=true&limit=100',
+   //url: 'http://mobi3.cpt.haw-hamburg.de:1080/API/query?query='+query+'&historical=true&limit=100',
+   url: 'http://localhost:8888/API/query?query='+query+'&historical=true&limit=100',
    withCredentials: false
 	})
 	.node(
