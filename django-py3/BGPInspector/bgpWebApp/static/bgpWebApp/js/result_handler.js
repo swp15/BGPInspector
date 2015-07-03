@@ -3,11 +3,19 @@ function process_query(query, representation, headers){
 }
 
 function send_query(query, representation, headers){
+
+	var json_content;
+
 	if (representation == 'table'){
 		build_header_table_in_result( headers, representation);
 	}
+
 	if (representation == 'graph'){
-	} 	
+		var nodes = [];
+		var edges = {};
+		json_content = [nodes, edges];
+	}
+ 	
 	oboe({
    url: 'http://mobi3.cpt.haw-hamburg.de:1080/API/query?query='+query,
    withCredentials: false
@@ -27,6 +35,20 @@ function send_query(query, representation, headers){
 				$(representation).DataTable().row.add(data_list).draw();
 			}
 			if (representation == 'graph'){
+				var routing_list = data_list[4];
+				for (i=0; i < routing_list.length; i++){
+					if (json_content[1].indexOf(routing_list[i]) == -1){
+						json_content[1].push(routing_list[i]);
+					}
+					var edge = routing_list[i-1]+':'+routing_list[i]
+					if ( (i>0) && ( edge in json_content[2])){
+						json_content[2].edge += 1;
+					}
+					else{
+						json_content[2].edge = 1;
+					}
+				}
+				console.log(json_content);
 			} 
 		}
 	)
