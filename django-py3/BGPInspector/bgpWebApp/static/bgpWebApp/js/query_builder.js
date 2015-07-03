@@ -20,7 +20,7 @@ $(function() {
         bootstrap_version: "3",
         filters: [
             {
-                filterName:"Local Pref.", "filterType":"text", field: ":local_pref", filterLabel: "Local Pref.",
+                filterName:"Local Pref.", "filterType":"text", field: "local_pref", filterLabel: "Local Pref.",
                 excluded_operators: operatorSet(['equal','not_equal']), 
                 filter_interface: [
                     {
@@ -30,7 +30,7 @@ $(function() {
                 ]
             },
             {
-                filterName:"Next Hop", "filterType":"text", field: ":nexthop", filterLabel: "Next Hop",
+                filterName:"Next Hop", "filterType":"text", field: "nexthop", filterLabel: "Next Hop",
                 excluded_operators: operatorSet(['equal','not_equal']), 
                 filter_interface: [
                     {
@@ -40,7 +40,7 @@ $(function() {
                 ]
             },
             {
-                filterName:"Origin", "filterType":"text", field: ":origin", filterLabel: "Origin",
+                filterName:"Origin", "filterType":"text", field: "origin", filterLabel: "Origin",
                 excluded_operators: operatorSet(['equal','not_equal']), 
                 filter_interface: [
                     {
@@ -50,7 +50,7 @@ $(function() {
                 ]
             },
             {
-                filterName:"Origin AS", "filterType":"text", field: ":origin_as", filterLabel: "Origin AS",
+                filterName:"Origin AS", "filterType":"text", field: "origin_as", filterLabel: "Origin AS",
                 excluded_operators: operatorSet(['equal','not_equal']), 
                 filter_interface: [
                     {
@@ -60,7 +60,7 @@ $(function() {
                 ]
             },
             {
-                filterName:"AS Path", "filterType":"text", field: ":as_path", filterLabel: "AS Path",
+                filterName:"AS Path", "filterType":"text", field: "as_path", filterLabel: "AS Path",
                 excluded_operators: operatorSet(['equal','not_equal']), 
                 filter_interface: [
                     {
@@ -70,7 +70,7 @@ $(function() {
                 ]
             },
             {
-                filterName:"Prefix", "filterType":"text", field: ":prefix", filterLabel: "Prefix",
+                filterName:"Prefix", "filterType":"text", field: "prefix", filterLabel: "Prefix",
                 excluded_operators: operatorSet(['equal','not_equal']), 
                 filter_interface: [
                     {
@@ -80,7 +80,7 @@ $(function() {
                 ]
             },
             {
-                filterName:"Source IP", "filterType":"text", field: ":source_ip", filterLabel: "Source IP",
+                filterName:"Source IP", "filterType":"text", field: "source_ip", filterLabel: "Source IP",
                 excluded_operators: operatorSet(['equal','not_equal']), 
                 filter_interface: [
                     {
@@ -90,7 +90,7 @@ $(function() {
                 ]
             },
             {
-                filterName:"Source AS", "filterType":"number", field: ":source_as", filterLabel: "Source AS",
+                filterName:"Source AS", "filterType":"number", field: "source_as", filterLabel: "Source AS",
                 excluded_operators: operatorSet(['equal','not_equal']),
                 filter_interface: [
                     {
@@ -143,7 +143,7 @@ $("#get_rules").click(function() {
   var a_rules = $("#demo_rules1").jui_filter_rules("getRules", 0, []);
   var query = buildQuery(a_rules);
   alert("VAST QUERY: " + query);
-//  process_query(query, 'table', ["timestamp", "source_ip", "source_as", "prefix", "as_path", "origin_as", "origin", "nexthop", "local_pref", "med", "community", "atomix_aggregate", "aggregator"]);
+  process_query(escape(query), 'table', ["timestamp", "source_ip", "source_as", "prefix", "as_path", "origin_as", "origin", "nexthop", "local_pref", "med", "community", "atomix_aggregate", "aggregator"]);
 });
 
 
@@ -212,5 +212,14 @@ function translateOperator(op) {
 }
 
 function convert_timestamp(ts) {
-    return ts.replace(/\//g,'-');
+    var datetime = ts.split(' ');
+    var date = datetime[0].split('/');
+    var new_date_str = date[2] + "-" + date[1] + "-" + date[0];
+    var new_ts = new_date_str + "+"+datetime[1];
+    return new_ts;
 }
+
+
+
+
+
