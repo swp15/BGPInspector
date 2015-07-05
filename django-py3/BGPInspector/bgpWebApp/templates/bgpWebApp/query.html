@@ -1,11 +1,12 @@
 {% extends 'bgpWebApp/base.html' %}
-		{% load static %}
+{% load static %}
 
 {% block title %}Query{% endblock %}
 
 {% block headers %}
 <script src={% static 'bgpWebApp/js/oboe-browser.js' %}>
 </script>
+<link rel="stylesheet" type="text/css" href="{% static 'bgpWebApp/css/query.css' %}" />
 {% endblock %}
 
 

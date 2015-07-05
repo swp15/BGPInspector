@@ -37,10 +37,6 @@ html {
 	margin-left: 0em;
 }
 
-.result_table {
-	text-align: left;
-}
-
 .content.container {
 	padding-right: 0em;
 	padding-left: 0em;
@@ -57,11 +53,3 @@ hr {
 	background: #717171;
 }
 
-/* for VisJS */
-#network_graph {
-	display: inline-block;
-	min-height: 100%;
-	min-width: 100%;
-	width: 100em;
-	height: 60em;
-}
