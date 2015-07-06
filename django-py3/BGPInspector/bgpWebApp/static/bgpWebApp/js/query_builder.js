@@ -126,10 +126,10 @@ $(function() {
                 },
             },
         ],
- 
         onValidationError: function(event, data) {
-            console.log(data);
-            if(data.hasOwnProperty("elem_filter")) {
+        $("#queryBuilderErrorLabel").remove();
+        $("#builder").append('<span id="queryBuilderErrorLabel" class="label label-danger">Invalid rule</span>');
+        if(data.hasOwnProperty("elem_filter")) {
                 data.elem_filter.focus();
             }
         },
@@ -142,8 +142,20 @@ $("#get_rules").click(function() {
   var a_rules = $("#builder").jui_filter_rules("getRules", 0, []);
   var query = buildQuery(a_rules);
   var queryOpts = getQueryOpts();
-  alert("VAST QUERY: " + query+queryOpts);
-  process_query(escape(query)+queryOpts, 'table', ["timestamp", "source_ip", "source_as", "prefix", "as_path", "origin_as", "origin", "nexthop", "local_pref", "med", "community", "atomix_aggregate", "aggregator"]);
+  if(queryOpts != "" && query !=""){
+    process_query(escape(query)+queryOpts, 'table', ["timestamp", "source_ip", "source_as", "prefix", "as_path", "origin_as", "origin", "nexthop", "local_pref", "med", "community", "atomix_aggregate", "aggregator"]);
+  } 
+});
+
+$("#show_query").click(function() {
+  var a_rules = $("#builder").jui_filter_rules("getRules", 0, []);
+  var query = buildQuery(a_rules);
+  var queryOpts = getQueryOpts();
+  var value = query + queryOpts;
+  if(queryOpts == "" || query ==""){
+    value = "Invalid input";
+  } 
+  $("#query_text").val(value);
 });
 
 
@@ -160,6 +172,13 @@ function buildQuery(rules){
     var result = "";
     var rule;
     var i;
+
+    if(rules.length == 0){
+        $("#builder").append('<span id="queryBuilderErrorLabel" class="label label-danger">Add at least one rule</span>');
+        return "";
+    }
+
+
     for(i = 0;i<rules.length; i++) {
         rule = rules[i];
         var op = rule['logical_operator'];
@@ -220,16 +239,33 @@ function convert_timestamp(ts) {
 }
 
 function getQueryOpts() {
+    $("#queryOptLimitErrorLabel").remove();
+    $("#queryOptCheckErrorLabel").remove();
     var atLeastOne = false;
     var result = "";
+    var error = false;
     ["historical","continuous","unified"].forEach(function(entry) {
         if ($("#"+entry)[0].checked){
            atLeastOne = true; 
            result += "&"+entry +"=true";
         }
     });
+    
+    if(!atLeastOne){
+        $("#queryOptCheck").append('<span id="queryOptCheckErrorLabel" class="label label-danger">Select at least one option</span>');
+        error = true;
+    }
+    var limit = parseInt($("#limit")[0].value);
+    if(isNaN(limit) || limit < 1 || limit > 1000){
+        $("#queryOptLimit").append('<spawn id="queryOptLimitErrorLabel" class="label label-danger">Set limit between 1 and 1000 please</span>');
+        error = true;
+    } 
 
-    return result + "&limit=" + $("#limit")[0].value;
+    if(error){
+        return "";
+    }
+    result += "&limit=" + limit;
+    return result;
 }
 
 
