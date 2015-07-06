@@ -1,56 +1,61 @@
 {% load static %}
-<div id="builder">
+<div id="main">
+<div id="builder_container" class="panel panel-default">
+  <div class="panel-heading">
+        <span id="queryBuilderInfo" class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+      <h3 class="panel-title">Query Builder
+       </h3>
+
+  </div>
+  <div id="builder"class="panel-body">
+
+  </div>
 </div>
-<div id="options">
-    <form id="optionForm" class="form-horizontal" role="form" data-toggle="validator">
-    <fieldset>
-    
-    <!-- Form Name -->
-    <legend></legend>
-    
-    <!-- Multiple Checkboxes -->
-      <div class="control-group error">
-        <label class="control-label" for="checkboxes">Query Options</label>
-        <div id=queryOptCheck class="controls">
-            <label class="checkbox" for="historical">
-              <input type="checkbox" name="checkboxes" id="historical" value="Historical">
+<div id="buttons" class="col-lg-6">
+    <div class="input-group">
+      <span class="input-group-btn">
+        <button id="send_query" class="btn btn-default" type="button">Send Query</button>
+      </span>
+      <input id="query_text" type="text" class="form-control" readonly>
+    </div><!-- /input-group -->
+</div><!-- /.col-lg-6 -->
+</div>
+<div class="panel panel-default" id="options">
+  <div class="panel-heading">
+      <h3 class="panel-title">Query Options</h3>
+  </div>
+  <div class="panel-body">
+    <form id="optionForm" class="form-horizontal" >
+      <fieldset>
+        <div id=queryOptCheck class="form-group">
+          <div class="checkbox">
+            <label for="historical">
+              <input type="checkbox" id="historical" value="Historical">
               Historical
             </label>
-            <label class="checkbox" for="continuous">
+          </div>
+          <div class="checkbox">
+            <label for="continuous">
               <input type="checkbox" name="checkboxes" id="continuous" value="Continuous">
-              Continues
+              Continuous
             </label>
-            <label class="checkbox" for="unified">
+          </div>
+          <div class="checkbox">
+            <label  for="unified">
               <input type="checkbox" name="checkboxes" id="unified" value="Unified">
               Unified
             </label>
+          </div>
         </div>
-      </div>
-    <!-- Text input-->
-    <div class="control-group">
-      <label class="control-label" for="limit">Limit</label>
-      <div id=queryOptLimit class="controls">
-        <input id="limit" name="textinput" type="text" placeholder="1000" class="input-mini">
-      </div>
-    </div>
-    
-    </fieldset>
+        <div id=queryOptLimit class="form-group">
+          <div class="input-group">
+            <span class="input-group-addon" id="basic-addon1">Limit</span>
+            <input size="5" id="limit" type="text" class="form-control input-sm" aria-describedby="basic-addon1">
+          </div>
+        </div>
+      </fieldset>
     </form>
+  </div>
 </div>
-<div id="buttons" style="margin-top: 30px; margin-bottom: 50px;">
-    <button id="get_rules" type="button" class="btn btn-primary">See Query</button>
-    <button id="clear_rules" type="button" class="btn btn-primary">Clear Rules</button>
-    <button id="set_rules" type="button" class="btn btn-primary">Set Dummy Rules</button>
-</div>
-<div class="row">
-  <div class="col-lg-6">
-    <div class="input-group">
-      <span class="input-group-btn">
-        <button id="show_query" class="btn btn-default" type="button">Show Query</button>
-      </span>
-      <input id="query_text" type="text" class="form-control">
-    </div><!-- /input-group -->
-  </div><!-- /.col-lg-6 -->
-</div><!-- /.row -->
 <script src="{% static 'bgpWebApp/js/query_builder.js' %}">
 </script>

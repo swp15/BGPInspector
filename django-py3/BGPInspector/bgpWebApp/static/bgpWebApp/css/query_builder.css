@@ -2,23 +2,60 @@
 
 }
 
+#builder_container {
+}
+
 #builder {
     text-align:left;
-
-
 }
 
 #buttons {
-
-
+    padding-left:0px;
+    padding-right:0px;
+    width:100%;
+}
+#main {
+    float:left;
+    margin-top:25px;
+    margin-right:20px;
+    width:800px;
 }
 
 #options {
+    float:left;
+    margin-top:25px;
+}
+.checkbox {
+    text-align:left;
+}
 
+.hasDatepicker {
+
+    position: relative; z-index: 100000;
+}
+
+#queryBuilderInfo {
+    float:left;
+    color:#B9ABA7;
+}
+
+#queryBuilderInfoAlert {
     text-align:left;
 }
 
 .validation_error {
 
+}
+
+#queryOptCheckErrorLabel {
+
+}
+.panel-body {
+    padding-left:30px;
+    padding-right:30px;
+}
+
+.rules_list_error_li {
+background-color:#a94442 !important;
 
 }
