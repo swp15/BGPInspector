@@ -16,6 +16,9 @@ def index(request):
 def query(request):
 	return render(request, 'bgpWebApp/query.html', {})
 
+def graph(request):
+	return render(request, 'bgpWebApp/graph.html', {})
+
 def impressum(request):
 	return render(request, 'bgpWebApp/impressum.html', {})
 

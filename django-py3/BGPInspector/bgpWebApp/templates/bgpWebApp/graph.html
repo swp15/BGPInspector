@@ -1,16 +1,15 @@
-var nodes = new vis.DataSet([
-	{% for AS in http_content.nodes %}
-		{id: {{ AS }}, label: '{{ AS }}'},
-	{% endfor %}
-])
+{% extends 'bgpWebApp/base.html' %}
+{% load static %}
+{% block title %}Graph{% endblock %}
 
-var edges = new vis.DataSet([
-	{% for edge in http_content.edges %}
-		{from: {{ edge.0 }}, to: {{ edge.1 }}},
-	{% endfor %}
-])
+{% block headers %}
+<script src="{% static 'bgpWebApp/js/go-debug.js' %}"></script>
+<script src="{% static 'bgpWebApp/js/graph.js' %}"></script>
+{% endblock %}
 
-var container = document.getElementById('network_graph');
-var data = { nodes: nodes, edges: edges};
-var options = {}
-var network = new vis.Network( container, data, options);
+{% block content %}
+<div id="myDiagramDiv" style="width:400px; height:150px; background-color: #DAE4E4;">
+</div>
+
+{% endblock %}
+

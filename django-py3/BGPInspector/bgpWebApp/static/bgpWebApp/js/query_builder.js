@@ -2,7 +2,6 @@ var headers = ["timestamp", "source_ip", "source_as", "prefix", "as_path", "orig
 
 var operators =  ['in','not_in','less','less_or_equal','greater','greater_or_equal','is_null','is_not_null','begins_with','not_begins_with','contains', 'not_contains','ends_with','not_ends_with','equal', 'not_equal', 'is_empty', 'is_not_empty'];
 
-var dummy_rules = [{"condition":[{"element_rule_id":"rule_demo_rules1_8","condition":{"filterType":"date","field":"&time","operator":"greater_or_equal","filterValue":["01-07-2015 00:00:00"]},"logical_operator":"AND"},{"element_rule_id":"rule_demo_rules1_7","condition":{"filterType":"date","field":"&time","operator":"less","filterValue":["01-07-2015 18:40:41"]},"logical_operator":"AND"}],"logical_operator":"AND"},{"element_rule_id":"rule_demo_rules1_5","condition":{"filterType":"text","field":":prefix","operator":"equal","filterValue":["192.14.0.0/16"]},"logical_operator":"AND"},{"element_rule_id":"rule_demo_rules1_4","condition":{"filterType":"text","field":":origin_as","operator":"equal","filterValue":["6532"]},"logical_operator":"AND"},{"element_rule_id":"rule_demo_rules1_3","condition":{"filterType":"text","field":":nexthop","operator":"equal","filterValue":["11.11.11.11"]},"logical_operator":"AND"}];
 
 function operatorSet(ops){
     var excluded_ops = [];
