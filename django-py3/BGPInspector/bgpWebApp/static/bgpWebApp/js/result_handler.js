@@ -1,14 +1,14 @@
-function process_query(query, representation, headers){
-	send_query(query, representation, headers);
+function process_query(query, representation, headers, limit){
+	send_query(query, representation, headers, limit);
 }
 
-function send_query(query, representation, headers){
+function send_query(query, representation, headers, limit){
 
 	if (representation == 'table'){
 		build_header_table_in_result( headers, representation);
 	}
 
-	limit = 1000;
+	limit = 10000;
 	object_counter = 0;
 
 	oboe({
@@ -19,7 +19,6 @@ function send_query(query, representation, headers){
 		'value.data', function(data_list) {
 			object_counter++;
 			percentage = (object_counter/limit) * 100;
-			console.log( String(percentage));
 			if (representation == 'table'){	
 				var diff =  headers.length - data_list.length;
 				if (diff > 0) {
@@ -27,16 +26,34 @@ function send_query(query, representation, headers){
 						data_list.push("");
 					}
 				}
-				$(representation).DataTable().row.add(data_list).draw();
-				document.getElementById('progress_bar').innerHTML = String(percentage) + '% loaded';
-				//document.getElementById('progress_bar').setAttribute("aria-valuenow", percentage);
-			 	$('#progress_bar').css('width', percentage+'%').attr('aria-valuenow', percentage);   	
-			} 
+				$(representation).DataTable().row.add(data_list);
+				if (object_counter%(limit/10) == 0){
+					console.log(object_counter);
+					$(representation).DataTable().draw();	
+					document.getElementById('progress_bar').innerHTML = String(percentage) + '% loaded';
+			 		$('#progress_bar').css('width', percentage+'%').attr('aria-valuenow', percentage);	
+				}
+			}
 		}
 	)
 	.node(
 		'progress', function(progress){	
 			console.log(progress);
+		}
+	)
+	.node( 
+		'state', function(state){
+			if (state == 'DONE'){
+				percentage = (object_counter/limit) * 100;
+				$(representation).DataTable().draw();	
+				document.getElementById('progress_bar').innerHTML = String(percentage) + '% loaded';
+				$('#progress_bar').css('width', percentage+'%').attr('aria-valuenow', percentage);	
+			}
+		}
+	)
+	.node(
+		'total_hits', function(total_hits){
+			limit = Math.min( total_hits, limit);
 		}
 	)
 	.fail(
