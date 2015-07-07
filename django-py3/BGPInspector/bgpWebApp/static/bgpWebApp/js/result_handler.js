@@ -74,7 +74,8 @@ function send_query(query, representation, headers){
 function render_progress_bar(object_counter, limit){
 	console.log(object_counter);
 	percentage = (object_counter/limit) * 100;
-	$('progress_bar').innerHTML = String(percentage) + '% loaded';
+	console.log( percentage);
+	document.getElementById('progress_bar').innerHTML = String(percentage) + '% loaded';
 	$('#progress_bar').css('width', percentage+'%').attr('aria-valuenow', percentage);	
 }	
 
