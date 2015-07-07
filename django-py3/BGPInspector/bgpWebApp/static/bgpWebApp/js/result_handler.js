@@ -61,8 +61,10 @@ function send_query(query, representation, headers){
 	)
 	.node(
 		'event_counter', function(event_counter){
-			limit = Math.min( event_counter, limit);
-			console.log('new limit ' + String(limit));
+			if (event_counter != '0'){
+				limit = Math.min( event_counter, limit);
+				console.log('new limit ' + String(limit));
+			}
 		}
 	)
 	.fail(
