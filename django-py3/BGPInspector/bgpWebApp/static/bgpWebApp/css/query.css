@@ -2,6 +2,14 @@
 	text-align: left;
 }
 
+#result {
+    float:left;
+}
+
+#query {
+    float:left;
+}
+
 .progress-bar {
 	background-image: none;
 	background-color: #009999;
