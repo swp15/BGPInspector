@@ -3,15 +3,17 @@ var headers = ["timestamp", "source_ip", "source_as", "prefix", "as_path", "orig
 var operators =  ['in','not_in','less','less_or_equal','greater','greater_or_equal','is_null','is_not_null','begins_with','not_begins_with','contains', 'not_contains','ends_with','not_ends_with','equal', 'not_equal', 'is_empty', 'is_not_empty'];
 
 
-function operatorSet(ops){
-    var excluded_ops = [];
-    operators.forEach(function(entry){
-        if(ops.indexOf(entry) < 0){
-            excluded_ops.push(entry);
-        }   
-    });
-    return excluded_ops;
-}
+$("#queryBuilderInfo").click(function(){
+    var info = "Create a <a href='https://github.com/mavam/vast' class='alert-link'>VAST</a> query by grouping rules. A <i>all rules</i> group " +
+               "represents a conjunction of the group elements, a <i>any rule</i> group a disjunction. A group element is a rule or another group.";
+    $("#queryBuilderInfoAlert").remove();
+    $("#main").prepend('<div id="queryBuilderInfoAlert" class="alert alert-info alert-dismissible" role="alert">' +
+                            '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
+                            info+
+                        '</div>'
+    );
+
+});
 
 
 $(function() {
@@ -127,44 +129,35 @@ $(function() {
             },
         ],
         onValidationError: function(event, data) {
-        $("#queryBuilderErrorLabel").remove();
-        $("#builder").append('<span id="queryBuilderErrorLabel" class="label label-danger">Invalid rule</span>');
-        if(data.hasOwnProperty("elem_filter")) {
+            if(data.hasOwnProperty("elem_filter")) {
                 data.elem_filter.focus();
             }
         },
  
     });
- 
 });
 
-$("#get_rules").click(function() {
-  var a_rules = $("#builder").jui_filter_rules("getRules", 0, []);
-  var query = buildQuery(a_rules);
-  var queryOpts = getQueryOpts();
-  if(queryOpts != "" && query !=""){
+function processQuery(query,queryOpts){
     process_query(escape(query)+queryOpts, 'table', ["timestamp", "source_ip", "source_as", "prefix", "as_path", "origin_as", "origin", "nexthop", "local_pref", "med", "community", "atomix_aggregate", "aggregator"]);
-  } 
-});
+}
 
-$("#show_query").click(function() {
+function isInvalid(query,queryOpts) {
+    return query == "" || queryOpts == "";
+}
+
+$("#send_query").click(function() {
   var a_rules = $("#builder").jui_filter_rules("getRules", 0, []);
   var query = buildQuery(a_rules);
   var queryOpts = getQueryOpts();
-  var value = query + queryOpts;
-  if(queryOpts == "" || query ==""){
-    value = "Invalid input";
-  } 
-  $("#query_text").val(value);
-});
 
+  var value;
+  if(isInvalid(query,queryOpts)) {
+    $("#query_text").val("Invalid Query");
+  } else{
+    $("#query_text").val(query+queryOpts);
+    processQuery(query,queryOpts);
+  }
 
-$("#clear_rules").click(function() {
-  $("#builder").jui_filter_rules("clearAllRules");
-});
-
-$("#set_rules").click(function() {
-  $("#builder").jui_filter_rules("setRules", dummy_rules);
 });
 
 
@@ -173,11 +166,10 @@ function buildQuery(rules){
     var rule;
     var i;
 
+    $("#queryBuilderErrorLabel").remove();
     if(rules.length == 0){
         $("#builder").append('<span id="queryBuilderErrorLabel" class="label label-danger">Add at least one rule</span>');
-        return "";
     }
-
 
     for(i = 0;i<rules.length; i++) {
         rule = rules[i];
@@ -189,6 +181,7 @@ function buildQuery(rules){
     }
     result = result.replace(/AND/g,"&&");
     result = result.replace(/OR/g,"||");
+
     return result;
 }
 
@@ -239,7 +232,7 @@ function convert_timestamp(ts) {
 }
 
 function getQueryOpts() {
-    $("#queryOptLimitErrorLabel").remove();
+    $("#queryOptLimitWarningLabel").remove();
     $("#queryOptCheckErrorLabel").remove();
     var atLeastOne = false;
     var result = "";
@@ -252,14 +245,17 @@ function getQueryOpts() {
     });
     
     if(!atLeastOne){
-        $("#queryOptCheck").append('<span id="queryOptCheckErrorLabel" class="label label-danger">Select at least one option</span>');
+        $("#queryOptCheck").prepend('<div id="queryOptCheckErrorLabel" class="label label-danger">Select at least one option</div>');
         error = true;
     }
     var limit = parseInt($("#limit")[0].value);
-    if(isNaN(limit) || limit < 1 || limit > 1000){
-        $("#queryOptLimit").append('<spawn id="queryOptLimitErrorLabel" class="label label-danger">Set limit between 1 and 1000 please</span>');
-        error = true;
+    if(limit < 1 || limit > 1000){
+        $("#queryOptLimit").append('<span id="queryOptLimitWarningLabel" class="label label-warning">Limit > 1000 may cause slow performance!</span>');
     } 
+
+    if(isNaN(limit)){
+        limit = 1000;
+    }
 
     if(error){
         return "";
@@ -267,6 +263,14 @@ function getQueryOpts() {
     result += "&limit=" + limit;
     return result;
 }
-
+function operatorSet(ops){
+    var excluded_ops = [];
+    operators.forEach(function(entry){
+        if(ops.indexOf(entry) < 0){
+            excluded_ops.push(entry);
+        }   
+    });
+    return excluded_ops;
+}
 
 
