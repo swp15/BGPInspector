@@ -1,49 +1,54 @@
-function process_query(query, representation, headers, limit){
-	send_query(query, representation, headers, limit);
+function process_query(query, representation, headers){
+	send_query(query, representation, headers);
 }
 
-function send_query(query, representation, headers, limit){
+function send_query(query, representation, headers){
 
 	if (representation == 'table'){
 		build_header_table_in_result( headers, representation);
 	}
-
-	limit = 10000;
+	limit = get_limit( query);
+	if (limit == null){
+		limit = 100000;
+	}
+	console.log('initial limit: ' + String(limit));
 	object_counter = 0;
-
 	oboe({
    url: 'http://mobi3.cpt.haw-hamburg.de:1080/API/query?query='+query,
    withCredentials: false
 	})
 	.node(
-		'value.data', function(data_list) {
-			object_counter++;
-			percentage = (object_counter/limit) * 100;
-			if (representation == 'table'){	
-				var diff =  headers.length - data_list.length;
-				if (diff > 0) {
-					for(i=0; i < diff; i++){
-						data_list.push("");
+		'value', function(value) {
+			if (value.type == "bgpdump::announcement"){
+				data_list = value.data;
+				object_counter++;
+				if (representation == 'table'){	
+					var diff =  headers.length - data_list.length;
+					if (diff > 0) {
+						for(i=0; i < diff; i++){
+							data_list.push("");
+						}
 					}
-				}
-				$(representation).DataTable().row.add(data_list);
-				if (object_counter%(limit/10) == 0){
-					console.log(object_counter);
-					$(representation).DataTable().draw();	
-					document.getElementById('progress_bar').innerHTML = String(percentage) + '% loaded';
-			 		$('#progress_bar').css('width', percentage+'%').attr('aria-valuenow', percentage);	
+					$(representation).DataTable().row.add(data_list);
+					if (object_counter%(limit/10) == 0){
+						percentage = (object_counter/limit) * 100;
+						$(representation).DataTable().draw();		
+						document.getElementById('progress_bar').innerHTML = String(percentage) + '% loaded';
+						$('#progress_bar').css('width', percentage+'%').attr('aria-valuenow', percentage);	
+					}
 				}
 			}
 		}
 	)
 	.node(
 		'progress', function(progress){	
-			console.log(progress);
+			console.log('progress ' + String(progress));
 		}
 	)
 	.node( 
 		'state', function(state){
 			if (state == 'DONE'){
+				console.log('state ' + state);
 				percentage = (object_counter/limit) * 100;
 				$(representation).DataTable().draw();	
 				document.getElementById('progress_bar').innerHTML = String(percentage) + '% loaded';
@@ -52,8 +57,9 @@ function send_query(query, representation, headers, limit){
 		}
 	)
 	.node(
-		'total_hits', function(total_hits){
-			limit = Math.min( total_hits, limit);
+		'event_counter', function(event_counter){
+			limit = Math.max( event_counter, limit);
+			console.log('event_counter ' + String(limit));
 		}
 	)
 	.fail(
@@ -75,6 +81,29 @@ function build_header_table_in_result( headers, div_id){
 	$(document).ready(function(){
 		$(div_id).DataTable();
 	});
+}
+
+function get_limit( string){
+	var n = string.search(/limit/i);
+	n += "limit".length;
+	n += 1;
+	var stop = false;
+	var number_buffer = "";
+	while (stop == false){	
+		if ((string[n] == '&') || (n == string.length)){
+			stop = true;
+		}
+		else{
+			number_buffer += string[n];
+		}
+		n++;
+	}
+	if (n != null){
+		return number_buffer;
+	}
+	else {
+		return n;
+	}
 }
 
 function get_loading_bar_html(){
