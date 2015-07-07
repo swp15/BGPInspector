@@ -1,4 +1,4 @@
-var headers = ["timestamp", "source_ip", "source_as", "prefix", "as_path", "origin_as", "origin", "nexthop", "local_pref", "med", "community", "atomix_aggregate", "aggregator"];
+var headers = ["type", "timestamp", "source_ip", "source_as", "prefix", "as_path", "origin_as", "origin", "nexthop", "local_pref", "med", "community", "atomix_aggregate", "aggregator"];
 
 var operators =  ['in','not_in','less','less_or_equal','greater','greater_or_equal','is_null','is_not_null','begins_with','not_begins_with','contains', 'not_contains','ends_with','not_ends_with','equal', 'not_equal', 'is_empty', 'is_not_empty'];
 
@@ -138,7 +138,7 @@ $(function() {
 });
 
 function processQuery(query,queryOpts){
-    process_query(escape(query)+queryOpts, 'table', ["timestamp", "source_ip", "source_as", "prefix", "as_path", "origin_as", "origin", "nexthop", "local_pref", "med", "community", "atomix_aggregate", "aggregator"]);
+    process_query(escape(query)+queryOpts, 'table', headers);
 }
 
 function isInvalid(query,queryOpts) {

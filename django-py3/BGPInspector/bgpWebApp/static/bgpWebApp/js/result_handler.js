@@ -31,6 +31,8 @@ function send_query(query, representation, headers){
 				if ( data_list[0] != ""){
 					data_list[0] = nano_secs_to_DateTime(data_list[0]);
 				}
+                data_list.unshift(value.type);
+                
 				$(representation).DataTable().row.add(data_list);
 				if (object_counter%(limit/10) == 0){
 					percentage = (object_counter/limit) * 100;
@@ -76,11 +78,14 @@ function build_header_table_in_result( headers, div_id){
 	document.getElementById('result').innerHTML = loading_bar_html 
 		+	'<table id=\"'
 		+ div_id
-		+ '\" class=\"display\"> \n <thead> \n <tr>'
+		+ '\" class=\"display nowrap compact cell-border\"> \n <thead> \n <tr>'
 		+ table_header_string
 		+ '\n </tr> \n </thead> \n </table>';
 	$(document).ready(function(){
-		$(div_id).DataTable();
+		$(div_id).DataTable(
+        {
+            "iDisplayLength":50,
+        });
 	});
 }
 
