@@ -31,14 +31,11 @@ function send_query(query, representation, headers){
 				if ( data_list[0] != ""){
 					data_list[0] = nano_secs_to_DateTime(data_list[0]);
 				}
-                data_list.unshift(value.type);
-                
+        data_list.unshift(value.type);      
 				$(representation).DataTable().row.add(data_list);
 				if (object_counter%(limit/10) == 0){
-					percentage = (object_counter/limit) * 100;
+					render_progress_bar(object_counter, limit);
 					$(representation).DataTable().draw();		
-					document.getElementById('progress_bar').innerHTML = String(percentage) + '% loaded';
-					$('#progress_bar').css('width', percentage+'%').attr('aria-valuenow', percentage);	
 				}
 			}
 		}
@@ -54,8 +51,7 @@ function send_query(query, representation, headers){
 				console.log('state ' + state);
 				percentage = (object_counter/limit) * 100;
 				$(representation).DataTable().draw();	
-				document.getElementById('progress_bar').innerHTML = String(percentage) + '% loaded';
-				$('#progress_bar').css('width', percentage+'%').attr('aria-valuenow', percentage);	
+				render_progress_bar( object_counter, limit);	
 			}
 		}
 	)
@@ -63,6 +59,7 @@ function send_query(query, representation, headers){
 		'event_counter', function(event_counter){
 			if (event_counter != '0'){
 				limit = Math.min( event_counter, limit);
+				render_progress_bar( object_counter, limit);
 				console.log('new limit ' + String(limit));
 			}
 		}
@@ -73,6 +70,13 @@ function send_query(query, representation, headers){
 		}
 	);
 }
+
+function render_progress_bar(object_counter, limit){
+	console.log(object_counter);
+	percentage = (object_counter/limit) * 100;
+	$('progress_bar').innerHTML = String(percentage) + '% loaded';
+	$('#progress_bar').css('width', percentage+'%').attr('aria-valuenow', percentage);	
+}	
 
 function build_header_table_in_result( headers, div_id){
 	table_header_string = build_table_string_from_array( headers);
