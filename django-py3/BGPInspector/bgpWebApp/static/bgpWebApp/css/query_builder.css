@@ -20,7 +20,7 @@
 
 #options {
     float:left;
-    width:200px;
+    min-width:200px;
     margin-top:25px;
 }
 .checkbox {
