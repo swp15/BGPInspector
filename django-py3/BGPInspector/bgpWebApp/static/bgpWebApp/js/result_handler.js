@@ -81,12 +81,14 @@ function build_header_table_in_result( headers, div_id){
 		+ '\" class=\"display nowrap compact cell-border\"> \n <thead> \n <tr>'
 		+ table_header_string
 		+ '\n </tr> \n </thead> \n </table>';
-	$(document).ready(function(){
-		$(div_id).DataTable(
-        {
-            "iDisplayLength":50,
-        });
-	});
+
+    $(document).ready(function(){
+	    	$("#"+div_id).DataTable(
+            {
+                "retrieve": true,
+                "iDisplayLength":50,
+            });
+    });
 }
 
 function nano_secs_to_DateTime(nano_secs){
