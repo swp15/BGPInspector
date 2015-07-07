@@ -3,7 +3,9 @@
 }
 
 #result {
-    float:left;
+  float:left;
+	overflow: auto;
+	width: 100%;
 }
 
 #query {
