@@ -30,7 +30,7 @@ function send_query(query, representation, headers){
 						}
 					}
 					if ( data_list[0] != ""){
-						data_list[0] = milli_secs_to_DateTime( data_list[0]);
+						data_list[0] = nano_secs_to_DateTime(data_list[0]);
 					}
 					$(representation).DataTable().row.add(data_list);
 					if (object_counter%(limit/10) == 0){
@@ -86,10 +86,10 @@ function build_header_table_in_result( headers, div_id){
 	});
 }
 
-function milli_secs_to_DateTime(milli_secs){
-	var t = new Date( milli_secs);
-	var formatted = t.format("dd.mm.yyyy hh:MM:ss");
-	return formatted;
+function nano_secs_to_DateTime(nano_secs){
+    var secs = nano_secs/1000000000;
+    var date = moment.utc(secs, 'X').format('YYYY-MM-DD+hh:mm:ss');
+    return date;
 }
 
 function get_limit( string){
