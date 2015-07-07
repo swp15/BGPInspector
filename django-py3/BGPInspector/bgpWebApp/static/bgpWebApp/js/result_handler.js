@@ -29,6 +29,9 @@ function send_query(query, representation, headers){
 							data_list.push("");
 						}
 					}
+					if ( data_list[0] != ""){
+						data_list[0] = milli_secs_to_DateTime( data_list[0]);
+					}
 					$(representation).DataTable().row.add(data_list);
 					if (object_counter%(limit/10) == 0){
 						percentage = (object_counter/limit) * 100;
@@ -81,6 +84,12 @@ function build_header_table_in_result( headers, div_id){
 	$(document).ready(function(){
 		$(div_id).DataTable();
 	});
+}
+
+function milli_secs_to_DateTime(milli_secs){
+	var t = new Date( milli_secs);
+	var formatted = t.format("dd.mm.yyyy hh:MM:ss");
+	return formatted;
 }
 
 function get_limit( string){
