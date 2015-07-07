@@ -19,26 +19,24 @@ function send_query(query, representation, headers){
 	})
 	.node(
 		'value', function(value) {
-			if (value.type == "bgpdump::announcement"){
-				data_list = value.data;
-				object_counter++;
-				if (representation == 'table'){	
-					var diff =  headers.length - data_list.length;
-					if (diff > 0) {
-						for(i=0; i < diff; i++){
-							data_list.push("");
-						}
+			data_list = value.data;
+			object_counter++;
+			if (representation == 'table'){	
+				var diff =  headers.length - data_list.length;
+				if (diff > 0) {
+					for(i=0; i < diff; i++){
+						data_list.push("");
 					}
-					if ( data_list[0] != ""){
-						data_list[0] = nano_secs_to_DateTime(data_list[0]);
-					}
-					$(representation).DataTable().row.add(data_list);
-					if (object_counter%(limit/10) == 0){
-						percentage = (object_counter/limit) * 100;
-						$(representation).DataTable().draw();		
-						document.getElementById('progress_bar').innerHTML = String(percentage) + '% loaded';
-						$('#progress_bar').css('width', percentage+'%').attr('aria-valuenow', percentage);	
-					}
+				}
+				if ( data_list[0] != ""){
+					data_list[0] = nano_secs_to_DateTime(data_list[0]);
+				}
+				$(representation).DataTable().row.add(data_list);
+				if (object_counter%(limit/10) == 0){
+					percentage = (object_counter/limit) * 100;
+					$(representation).DataTable().draw();		
+					document.getElementById('progress_bar').innerHTML = String(percentage) + '% loaded';
+					$('#progress_bar').css('width', percentage+'%').attr('aria-valuenow', percentage);	
 				}
 			}
 		}
