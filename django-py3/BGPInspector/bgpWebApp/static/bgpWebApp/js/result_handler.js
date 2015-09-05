@@ -14,7 +14,7 @@ function send_query(query, representation, headers){
 	console.log('initial limit: ' + String(limit));
 	object_counter = 0;
 	oboe({
-   url: 'http://mobi3.cpt.haw-hamburg.de:1080/API/query?query='+query,
+   url: 'http://mobi1.cpt.haw-hamburg.de:1080/API/query?query='+query,
    withCredentials: false
 	})
 	.node(
@@ -72,9 +72,7 @@ function send_query(query, representation, headers){
 }
 
 function render_progress_bar(object_counter, limit){
-	console.log(object_counter);
 	percentage = (object_counter/limit) * 100;
-	console.log( percentage);
 	document.getElementById('progress_bar').innerHTML = String(percentage) + '% loaded';
 	$('#progress_bar').css('width', percentage+'%').attr('aria-valuenow', percentage);	
 }	
@@ -89,13 +87,16 @@ function build_header_table_in_result( headers, div_id){
 		+ table_header_string
 		+ '\n </tr> \n </thead> \n </table>';
 
-    $(document).ready(function(){
-	    	$("#"+div_id).DataTable(
-            {
-                "retrieve": true,
-                "iDisplayLength":50,
-            });
-    });
+	$(document).ready(function(){
+		$("#"+div_id).dataTable({
+			"retrieve": true,
+			"iDisplayLength":50,
+			"dom": 'T<"clear">lfrtip',
+			"tableTools": {
+				"sSwfPath": "/swf/copy_csv_xls_pdf.swf"
+       }
+		});
+	});
 }
 
 function nano_secs_to_DateTime(nano_secs){
