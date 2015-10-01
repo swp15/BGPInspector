@@ -3,49 +3,73 @@ function process_query(query, representation, headers){
 }
 
 function send_query(query, representation, headers){
-
-	if (representation == 'table'){
-		build_header_table_in_result( headers, representation);
-	}
+	var row_list  = [];
 	limit = get_limit( query);
 	if (limit == null){
 		limit = 100000;
 	}
-	console.log('initial limit: ' + String(limit));
 	object_counter = 0;
 	oboe({
-   url: 'http://mobi1.cpt.haw-hamburg.de:1080/API/query?query='+query,
-   withCredentials: false
+		//url: 'http://fabrice-ryba.ddns.net/daten.json',
+		//url: 'http://mobi1.cpt.haw-hamburg.de:1080/API/query?query='+query,
+		url: 'http://mobi1.cpt.haw-hamburg.de:1080/API/query?query=%28%26time%3C2015-09-22%2B15%3A58%3A09%29&historical=true&limit=99999',
+		withCredentials: false
 	})
 	.node(
 		'value', function(value) {
-			data_list = value.data;
+			data_dic = value.data;
 			object_counter++;
 			if (representation == 'table'){	
-				var diff =  headers.length - data_list.length;
+				var diff =  headers.length - data_dic.length;
 				if (diff > 0) {
-					for(i=0; i < diff; i++){
-						data_list.push("");
+					for(i=0; i < headers.length; i++) {
+						if (!(headers[i] in data_dic)) {
+							data_dic[headers[i]] = "";
+						}
 					}
 				}
-				if ( data_list[0] != ""){
-					data_list[0] = nano_secs_to_DateTime(data_list[0]);
+				if ( data_dic['timestamp'] != ""){
+					data_dic['timestamp'] = nano_secs_to_DateTime(data_dic['timestamp']);
 				}
-        data_list.unshift(value.type);      
-				$(representation).DataTable().row.add(data_list);
-				if (object_counter%(limit/10) == 0){
-					render_progress_bar(object_counter, limit);
-					$(representation).DataTable().draw();		
-				}
+        //data_dic.unshift(value.type);      
+				row_list.push( data_dic);
+				//if (object_counter%(limit/10) == 0){
+					//render_progress_bar(object_counter, limit);
+				//}
 			}
 		}
 	)
 	.node(
 		'progress', function(progress){	
 			console.log('progress ' + String(progress));
+			if (progress == 1){
+				var container = '#result';
+
+				var columns = [];
+				var slick_grid_required_column_fields = ["id", "name", "field"];
+				for ( var i=0; i<headers.length; i++){
+					columns_dic = {};
+					for ( var j=0; j<slick_grid_required_column_fields.length; j++){	
+						columns_dic[slick_grid_required_column_fields[j]] = headers[i];
+					}
+					columns.push( columns_dic);
+				}
+
+				var options = {
+					enableCellNavigation: true,
+					enableColumnReorder: false
+				}
+					
+				console.log(columns);
+				console.log(row_list);
+				var slick_grid = new Slick.Grid(container, row_list, columns, options);
+				console.log(slick_grid);
+				slicky_grid.render();
+			}
+
 		}
 	)
-	.node( 
+/*		.node( 
 		'state', function(state){
 			if (state == 'DONE'){
 				console.log('state ' + state);
@@ -55,6 +79,7 @@ function send_query(query, representation, headers){
 			}
 		}
 	)
+
 	.node(
 		'event_counter', function(event_counter){
 			if (event_counter != '0'){
@@ -62,6 +87,12 @@ function send_query(query, representation, headers){
 				render_progress_bar( object_counter, limit);
 				console.log('new limit ' + String(limit));
 			}
+		}
+	)
+*/
+	.node(
+		'state', function(state){
+			console.log(state);	
 		}
 	)
 	.fail(

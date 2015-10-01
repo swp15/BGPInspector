@@ -4,8 +4,13 @@
 {% block title %}Query{% endblock %}
 
 {% block headers %}
-<script src={% static 'bgpWebApp/js/oboe-browser.js' %}>
-</script>
+{% load staticfiles %}
+<script src={% static 'bgpWebApp/js/oboe-browser.js' %}></script>
+<!--script src={% static 'bgpWebApp/SlickGrid/lib/jquery-1.7.min.js' %}></script-->
+<script src={% static 'bgpWebApp/SlickGrid/lib/jquery.event.drag-2.2.js' %}></script>
+<script src={% static 'bgpWebApp/SlickGrid/slick.core.js' %}></script>
+<script src={% static 'bgpWebApp/SlickGrid/slick.grid.js' %}></script>
+<link rel="stylesheet" type="text/css" href="{% static 'bgpWebApp/SlickGrid/slick.grid.css' %}" />
 <link rel="stylesheet" type="text/css" href="{% static 'bgpWebApp/css/query.css' %}" />
 {% endblock %}
 

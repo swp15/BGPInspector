@@ -3,14 +3,16 @@
 }
 
 #result {
-    float:left;
+	float:left;
 	overflow: auto;
 	width: 100%;
-    margin-top:15px;
+	margin-top:15px;
+	min-height: 100%;
+	height: 46.0em;
 }
 
 #query {
-    float:left;
+	float:left;
 }
 
 .progress-bar {
