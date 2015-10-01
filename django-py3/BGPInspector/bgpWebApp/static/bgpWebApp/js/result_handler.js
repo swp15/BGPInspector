@@ -12,7 +12,7 @@ function send_query(query, representation, headers){
 	oboe({
 		//url: 'http://fabrice-ryba.ddns.net/daten.json',
 		//url: 'http://mobi1.cpt.haw-hamburg.de:1080/API/query?query='+query,
-		url: 'http://mobi1.cpt.haw-hamburg.de:1080/API/query?query=%28%26time%3C2015-09-22%2B15%3A58%3A09%29&historical=true&limit=99999',
+		url: 'http://mobi1.cpt.haw-hamburg.de:1080/API/query?query=%28%26time%3C2015-09-22%2B15%3A58%3A09%29&historical=true&limit=99',
 		withCredentials: false
 	})
 	.node(
@@ -31,7 +31,7 @@ function send_query(query, representation, headers){
 				if ( data_dic['timestamp'] != ""){
 					data_dic['timestamp'] = nano_secs_to_DateTime(data_dic['timestamp']);
 				}
-        //data_dic.unshift(value.type);      
+        data_dic['type'] = value.type;      
 				row_list.push( data_dic);
 				//if (object_counter%(limit/10) == 0){
 					//render_progress_bar(object_counter, limit);
