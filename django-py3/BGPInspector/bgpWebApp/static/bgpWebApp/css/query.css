@@ -1,21 +1,27 @@
-.result_table {
+#table_container {
+	min-height: 100%;
+	float: left;
+	width: 100%;	
+}
+
+#table {
 	text-align: left;
+	margin-top: 1em;
+	height: 40em;
 }
 
 #result {
-	float:left;
-	overflow: auto;
 	width: 100%;
 	margin-top:15px;
 	min-height: 100%;
-	height: 46.0em;
 }
 
-#query {
-	float:left;
+#loading_bar_container {
+	min-height: 100%;
+	float: left;
+	width: 100%;
 }
 
 .progress-bar {
-	background-image: none;
 	background-color: #009999;
 }
