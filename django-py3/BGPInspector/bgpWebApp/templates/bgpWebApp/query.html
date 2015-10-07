@@ -5,13 +5,10 @@
 
 {% block headers %}
 {% load staticfiles %}
-<script src={% static 'bgpWebApp/js/oboe-browser.js' %}></script>
-<!--script src={% static 'bgpWebApp/SlickGrid/lib/jquery-1.7.min.js' %}></script-->
-<script src={% static 'bgpWebApp/SlickGrid/lib/jquery.event.drag-2.2.js' %}></script>
-<script src={% static 'bgpWebApp/SlickGrid/slick.core.js' %}></script>
-<script src={% static 'bgpWebApp/SlickGrid/slick.grid.js' %}></script>
 <script src={% static 'bgpWebApp/js/result_handler.js' %}></script>
-<link rel="stylesheet" type="text/css" href="{% static 'bgpWebApp/SlickGrid/slick.grid.css' %}" />
+<script src={% static 'bgpWebApp/fattable/fattable.js' %}></script>
+<script src={% static 'bgpWebApp/js/oboe-browser.js' %}></script>
+<link rel="stylesheet" type="text/css" href="{% static 'bgpWebApp/fattable/fattable.css' %}" />
 <link rel="stylesheet" type="text/css" href="{% static 'bgpWebApp/css/query.css' %}" />
 <link rel="stylesheet" type="text/css" href="{% static 'bgpWebApp/css/query_builder.css' %}" />
 {% endblock %}

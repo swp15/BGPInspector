@@ -3,103 +3,163 @@ function process_query(query, representation, headers){
 }
 
 function send_query(query, representation, headers){
-	var row_list  = [];
-	var dom_parent = 'result';
-	var loading_bar_container = 'loading_bar_container';
-	make_div( loading_bar_container, dom_parent);
-	var loading_bar_id = 'loading_bar';
-	build_loading_bar_in_result( loading_bar_id, loading_bar_container);
-	var table_container = 'table_container';
-	make_div( table_container, dom_parent);
-	var table_id = 'table';
-	make_div( table_id, table_container);
-	//$('#'+table_id).css('text-align','left');
-	oboe({
-		//url: 'http://fabrice-ryba.ddns.net/daten.json',
-		//url: 'http://mobi1.cpt.haw-hamburg.de:1080/API/query?query='+query,
-		url: 'http://mobi1.cpt.haw-hamburg.de:1080/API/query?query=%28%26time%3C2015-09-22%2B15%3A58%3A09%29&historical=true&limit=9999',
-		withCredentials: false
-	})
-	.node(
-		'value', function(value) {
-			data_dic = value.data;
-			if (representation == 'table'){	
-				var diff =  headers.length - data_dic.length;
-				if (diff > 0) {
-					for(i=0; i < headers.length; i++) {
-						if (!(headers[i] in data_dic)) {
-							data_dic[headers[i]] = "";
+	if (representation == 'table'){
+		var row_list  = [];
+		var dom_parent = 'result';
+		var table_container = 'table_container';
+		make_div( table_container, dom_parent);
+		var table_id = 'table';
+		make_div( table_id, table_container);
+		build_fattable( table_id, headers);
+	}
+	else {
+		$('#result').html('How do you want me to display your data?');
+	}
+}
+
+function build_fattable( table_id, headers){
+	var max_rows = 160;
+	var row_page_size = 40;
+	var column_page_size = 30;
+	var min_header_size = 5;
+	var header_length_multiplier = 15;
+
+	var getJSON = function(url_paras,cb)  {
+		var response = [];
+		/* just testing stuff */
+		var counter = 0;
+		var start = parseInt(url_paras['rows'])*128;
+		var end = parseInt(url_paras['rows'])*128+128;
+		console.log("GET "+url_paras['url']+'?start='+start+'&end='+end);
+		/*                   	*/
+		oboe({
+			url: url_paras['url']+url_paras['rows'],
+			method: "GET",
+			//headers: Object,
+			//body: Object,
+			//cached: Boolean,
+			withCredentials: false
+		})
+		.node(
+			'value', function(value) {
+				counter++;
+				var row_dic = value.data;
+				row_dic['type'] = value.type;
+				var row = []
+				for (var i=0; i<headers.length; i++) {
+					if (headers[i] in row_dic) {
+						if (headers[i] == 'timestamp') {
+							row.push(nano_secs_to_DateTime(row_dic[headers[i]]));
+						}
+						else {
+							row.push(row_dic[headers[i]]);
 						}
 					}
+					else {
+						row.push("");
+					}
 				}
-				if ( data_dic['timestamp'] != ""){
-					data_dic['timestamp'] = nano_secs_to_DateTime(data_dic['timestamp']);
+				response.push(row);		
+
+				/* progress == '1' */
+				if (counter % 40 == 0) {
+					cb(response);	
 				}
-        data_dic['type'] = value.type;      
-				row_list.push( data_dic);
 			}
-		}
-	)
-	.node(
-		'progress', function(progress){	
-			console.log('progress ' + String(progress));
-			render_progress_bar( progress, loading_bar_id);
-			if (progress == 1){
-				build_slickgrid_table( $('#'+table_id), headers, row_list);
+		)
+		.node(
+			'progress', function(progress) {
+				if (progress == '1') {	
+					console.log(response);
+				}
 			}
-		}
-	)
-	.fail(
-		function(err) {
-			console.log( err);
-		}
-	);
-}
-
-function build_slickgrid_table( container, headers, rows){
-	var columns = [];
-	var slick_grid_required_column_fields = ["id", "name", "field"];
-	for ( var i=0; i<headers.length; i++){
-		columns_dic = {};
-		for ( var j=0; j<slick_grid_required_column_fields.length; j++){	
-			columns_dic[slick_grid_required_column_fields[j]] = headers[i];
-		}
-		columns.push( columns_dic);
+		)
+		.fail(
+			function(err){
+				console.log(err);
+		})		
 	}
-	var options = {
-		enableCellNavigation: true,
-		enableColumnReorder: false
+ 
+	var columnWidths = [];
+	for (var i=0; i<headers.length; i++) {
+		header_length = headers[i].length;
+		if (header_length < min_header_size) {
+			columnWidths.push(min_header_size * header_length_multiplier);
+		}
+		else {
+			columnWidths.push(header_length * header_length_multiplier);
+		}
 	}
-	var slick_grid = new Slick.Grid(container, rows, columns, options);
-	slick_grid.render();
-}
 
+	var painter = new fattable.Painter();
+	painter.fillCell = function(cellDiv, data) {
+		cellDiv.textContent = data.content;
+		if (data.rowId % 2 == 0) {
+			cellDiv.className = "even";
+		}
+		else {
+			cellDiv.className = "odd";	
+		}
+ }
+ painter.fillCellPending = function(cellDiv, data) {
+		cellDiv.textContent = "Wait ...";
+		cellDiv.className = "pending";
+ }
+
+
+ var tableModel = new fattable.PagedAsyncTableModel();
+
+ tableModel.cellPageName = function(i,j) {
+		var I = (i / row_page_size) | 0;
+		var J = (j / column_page_size) | 0;
+		return JSON.stringify([I,J]);
+ }
+ tableModel.hasColumn = function() {
+		return true;
+ }
+
+	tableModel.columnHeaders = headers;
+
+	tableModel.getHeader = function(j, cb) {
+		cb(tableModel.columnHeaders[j]);
+	}
+
+	tableModel.fetchCellPage = function(pageName, cb) {
+		var coords = JSON.parse(pageName);
+		var I = coords[0];
+		var J = coords[1];	
+		// set 'correct' url
+		var request = {url: "http://fabrice-ryba.ddns.net/daten_small.json", rows: I}; //, cols: J
+		getJSON( request, function(data) {
+			cb(function(i,j) {
+				return {
+					rowId: i,
+					content: data[i-I*row_page_size][j-J*column_page_size]
+				};
+			});
+		});
+	}
+
+	var table = fattable({
+		"container": '#'+table_id,
+		"model": tableModel,
+		"nbRows": max_rows,		
+		"rowHeight": 35,
+		"headerHeight": 40,
+		"painter": painter,
+		"columnWidths": columnWidths
+	});
+
+	window.onresize = function() {
+		table.setup();
+	}
+}
+	
 function make_div( id, dom_parent){
 	if ($('#'+id).length == 0){
 		var $div = $("<div>", {id: id});
 		$('#'+dom_parent).append($div);
 	}
-}
-
-function build_loading_bar_in_result( id, dom_parent){
-	make_div( id, dom_parent);
-	var div = $('#'+id);
-	div.addClass( "progess progress-bar");
-	div.attr("role", "progressbar");
-	div.attr("aria-valuenow", "0");
-	div.attr("aria-valuemin", "0");
-	div.attr("aria-valuemax", "100");
-	div.attr("style", "width:0%");
-	div.attr("color", "#000"); 
-	div.html( "0% hits received");
-	setTimeout(function(){render_progress_bar( 0.0, id)}, 10);
-}
-
-function render_progress_bar(progress, id){
-	progress = progress * 100;
-	$('#'+id).html(String(progress) + '% hits received');
-	$('#'+id).css('width', progress+'%').attr('aria-valuenow', progress);	
-	$('#'+id).css('color', '#FFF');
 }
 
 function nano_secs_to_DateTime(nano_secs){

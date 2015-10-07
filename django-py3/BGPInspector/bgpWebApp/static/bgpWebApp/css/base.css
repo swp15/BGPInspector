@@ -6,6 +6,9 @@ html {
 
 body {
 	min-height: 100%;
+	/* fattable stuff */
+	background-color: #FFF !important;
+	width: 100% !important;	
 }
 
 .footer {

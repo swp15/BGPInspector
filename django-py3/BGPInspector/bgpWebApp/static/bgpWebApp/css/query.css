@@ -1,3 +1,9 @@
+#result {
+	width: 100%;
+	margin-top:15px;
+	min-height: 100%;
+}
+
 #table_container {
 	min-height: 100%;
 	float: left;
@@ -5,15 +11,10 @@
 }
 
 #table {
-	text-align: left;
+	border-width: 0.1em;
+	border-style: solid; 
 	margin-top: 1em;
 	height: 40em;
-}
-
-#result {
-	width: 100%;
-	margin-top:15px;
-	min-height: 100%;
 }
 
 #loading_bar_container {
