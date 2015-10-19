@@ -41,8 +41,6 @@ body {
 
 #rowMaker {
 	min-height: 100%;
-	margin-right: 0em;
-	margin-left: 0em;
 }
 
 #contentCol {
@@ -50,8 +48,8 @@ body {
 }
 
 .content.container {
-	padding-right: 0em;
-	padding-left: 0em;
+	padding-right: 1em;
+	padding-left: 1em;
 	padding-top: 3.5em;
 	padding-bottom: 2.5em;
 	text-align: center;

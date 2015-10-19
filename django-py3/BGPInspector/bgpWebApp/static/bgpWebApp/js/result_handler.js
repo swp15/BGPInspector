@@ -22,14 +22,14 @@ function build_fattable( table_id, headers){
 	var row_page_size = 40;
 	var column_page_size = 30;
 	var min_header_size = 5;
-	var header_length_multiplier = 15;
+	var header_length_offset = 70;
 
 	var getJSON = function(url_paras,cb)  {
 		var response = [];
 		/* just testing stuff */
 		var counter = 0;
-		var start = parseInt(url_paras['rows'])*128;
-		var end = parseInt(url_paras['rows'])*128+128;
+		var start = parseInt(url_paras['rows'])*row_page_size;
+		var end = parseInt(url_paras['rows'])*row_page_size+row_page_size;
 		console.log("GET "+url_paras['url']+'?start='+start+'&end='+end);
 		/*                   	*/
 		oboe({
@@ -84,10 +84,10 @@ function build_fattable( table_id, headers){
 	for (var i=0; i<headers.length; i++) {
 		header_length = headers[i].length;
 		if (header_length < min_header_size) {
-			columnWidths.push(min_header_size * header_length_multiplier);
+			columnWidths.push(min_header_size+header_length_offset);
 		}
 		else {
-			columnWidths.push(header_length * header_length_multiplier);
+			columnWidths.push(header_length+header_length_offset);
 		}
 	}
 
