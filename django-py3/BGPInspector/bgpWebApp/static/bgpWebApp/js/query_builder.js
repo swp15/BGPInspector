@@ -129,11 +129,14 @@ function get_filter(name,kind)
 {
     
     var f_name = get_filter_name(name,kind);
+    var label  = get_filter_label(name);
     var filter_type = get_filter_type(kind);
     var excl_ops = get_excluded_operators(kind);
     var filter_itf = get_filter_interface(kind);
-    var value_conv = get_filter_value_conversion(kind);
-	filter = {filterName:name, "filterType":filter_type, field:f_name, filterLabel: name, excluded_operators: excl_ops,filter_interface:filter_itf, filter_value_conversion:value_conv};
+	filter = {filterName:name, "filterType":filter_type, field:f_name, filterLabel: label, excluded_operators: excl_ops,filter_interface:filter_itf};
+    if(kind == "date"){
+        filter[filter_value_conversion] = get_filter_value_conversion(kind);
+    }
 	return filter;
 }
 
@@ -147,12 +150,30 @@ function get_filter_name(name,kind)
     }
 }
 
+function get_filter_label(name)
+{
+    var words = name.split("_");
+    var result = "";
+    for(i =0;i<words.length;i++){
+        result = result + capitalize(words[i]);
+        if(i < words.length-1){
+            result = result + " ";
+        }
+    }
+    return result;
+}
 
+function capitalize(s)
+{
+    return s[0].toUpperCase() + s.slice(1);
+}
 function get_filter_type(kind)
 {
     switch(kind) {
         case "time_point":
             return "date";
+        case "count":
+            return "number";
         default:
             return "text";
     }
@@ -190,14 +211,16 @@ function get_filter_interface(kind)
             filter_itf["filter_widget_properties"] = {dateFormat:"dd/mm/yy", timeFormat: "HH:mm:ss", changeMonth:true, changeYear:true, showSecond:true};
             return [filter_itf];
         default:
-	        return [{filter_element: "input",filter_element_attributes :{"type":"text","value":"kek"}}];
+	        return [{filter_element: "input",filter_element_attributes :{"type":"text","value":""}}];
     }
 
 }
 
 function set_query_builder(filters)
 {
-	$("#builder").remove();
+    var qb = $("#builder");
+    qb.jui_filter_rules('destroy');
+    qb.remove();
     var new_div = '<div id="builder"></div>';
     $("#builder_container").append(new_div);
 	$("#builder").jui_filter_rules({
@@ -219,7 +242,9 @@ function isInvalid(query,queryOpts) {
 }
 
 $("#send_query").click(function() {
-  var a_rules = $("#builder").jui_filter_rules("getRules", 0, []);
+  var qb = $("#builder");
+  var a_rules = qb.jui_filter_rules("getRules", 0, []);
+  console.log("FUCK");
   var query = buildQuery(a_rules);
   var queryOpts = getQueryOpts();
  
