@@ -26,3 +26,8 @@
 .progress-bar {
 	background-color: #009999;
 }
+
+#query_addition {
+	margin-top: 2em;
+	float: left;
+}

@@ -8,6 +8,8 @@
 <script src={% static 'bgpWebApp/js/result_handler.js' %}></script>
 <script src={% static 'bgpWebApp/fattable/fattable.js' %}></script>
 <script src={% static 'bgpWebApp/js/oboe-browser.js' %}></script>
+<script src='//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.7.5/js/bootstrap-select.min.js'></script>
+<link rel="stylesheet" type="text/css" href='//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.7.5/css/bootstrap-select.min.css'></script>
 <link rel="stylesheet" type="text/css" href="{% static 'bgpWebApp/fattable/fattable.css' %}" />
 <link rel="stylesheet" type="text/css" href="{% static 'bgpWebApp/css/query.css' %}" />
 <link rel="stylesheet" type="text/css" href="{% static 'bgpWebApp/css/query_builder.css' %}" />
@@ -15,8 +17,12 @@
 
 
 {% block content %}
-	<div id="query">
-    {% include 'bgpWebApp/gui.html' %}
+	<div id="query_container">
+		<div id="query_addition">
+		</div>
+		<div id="query">
+			{% include 'bgpWebApp/gui.html' %}
+		</div>
 	</div>
 	<div id="result">
 	</div>
