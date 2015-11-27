@@ -81,8 +81,10 @@ function build_table( headers){
 		cols.push( { 'title': headers[index]});
 	}
 	var table = $('#'+table_id);
+	table.width
 	table.DataTable( {
-			columns: cols
+		'paging': false,
+		columns: cols
 	} );
 	oboe({
 		url: 'http://fabrice-ryba.ddns.net/daten_small.json',
@@ -109,8 +111,12 @@ function build_table( headers){
 					row[header] = "";
 				}
 			})
+			var row_list = [];
+			for( var index=0; index<headers.length; index++){
+				row_list.push(row[headers[index]]);
+			}
 			console.log(row);
-			$('#table').DataTable().row.add(row).draw();	
+			$('#table').DataTable().row.add(row_list).draw();	
 		}
 	)
 	.fail(
