@@ -1,3 +1,63 @@
+/*
+var paras = 'ids=4556,4651,46,929';
+oboe({
+	url: 'fabrice-ryba.ddns.net',
+	method: 'POST',
+	withcredentials: false,
+	body: paras
+})
+.fail(
+	function(err){
+		console.log(err);
+	}
+)
+*/
+retrieve_DataTypes('http://mobi1.cpt.haw-hamburg.de:1080');
+function retrieve_DataTypes(VAST_URL){
+	var types = {};
+	oboe({
+		url: VAST_URL + '/api/v1/types',
+		method: 'GET',
+		withcredentials: false
+	})
+	.node(
+		'type', function(type){
+			fields = [];
+			for( var field in type.structure){
+				fields.push(field);
+			}
+			types[type.name] = fields;
+		}
+	)
+	.done(function(){
+		start_flow_after_type_request(types);
+	})		
+	.fail(
+		function(err){
+			console.log(err);
+		}
+	)
+}
+
+function start_flow_after_type_request(types){
+	
+
+function fill_type_dropdown(choices_dic){
+	var html_string = "<select id=\"type_picker\" class=\"selectpicker\" multiple data-selected-text-format=\"count\">";
+	choices_dic['a'] = 'b';
+	console.log(choices_dic);
+	for( var type_name in choices_dic){
+		console.log(type_name);
+		if(choices_dic.hasOwnProperty(type_name)) { 
+			html_string += '<option>'+type_name+'</option>';
+		}
+	}
+	html_string += '</select>';
+	console.log(html_string);
+	$("#query_addition").html(html_string);
+	$('.selectpicker').selectpicker();
+}
+
 var headers = ["type", "timestamp", "source_ip", "source_as", "prefix", "as_path", "origin_as", "origin", "nexthop", "local_pref", "med", "community", "atomix_aggregate", "aggregator"];
 
 var operators =  ['in','not_in','less','less_or_equal','greater','greater_or_equal','is_null','is_not_null','begins_with','not_begins_with','contains', 'not_contains','ends_with','not_ends_with','equal', 'not_equal', 'is_empty', 'is_not_empty'];
@@ -149,7 +209,7 @@ $("#send_query").click(function() {
   var a_rules = $("#builder").jui_filter_rules("getRules", 0, []);
   var query = buildQuery(a_rules);
   var queryOpts = getQueryOpts();
-
+ 
   var value;
   if(isInvalid(query,queryOpts)) {
     $("#query_text").val("Invalid Query");
