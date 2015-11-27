@@ -43,20 +43,17 @@ function start_flow_after_type_request(types){
 	set_query_builder(dummy_filter);
 }	
 
-function type_button_callback(){
+function type_button_callback(types){
 	var selected_types = get_selected_types(types);
 	set_type_filters(selected_types);
 }
 
 function get_selected_types( types){	
-	$('.selectpicker').val();
+	var selected_types = $('.selectpicker').val();
 	var selected_types_structure = {};
-	for( type in selected_types){
+	selected_types.forEach(function	(type){
 		selected_types_structure[type] = types[type];
-	}
-	var button_id = 'type_select_button';
-	build_types_submit_button(button_id);
-	$('#'+button_id).click(function(selected_types){ console.log('blub');});//selected_types_structure)});//some_function(selected_types_structure)});
+	});
 	return selected_types_structure;
 }
 
@@ -71,10 +68,13 @@ function fill_type_dropdown(choices_dic){
 	html_string += '</select><br>';
 	$("#query_addition").html(html_string);
 	$('.selectpicker').selectpicker();
+	var button_id = 'type_select_button';
+	build_types_submit_button(button_id);
+	$('#'+button_id).click(function(){type_button_callback(choices_dic);}); 
 }
 
 function build_types_submit_button(id){
-	var button_string = '<input id=\"'+id+' type=\"submit\" class=\"btn btn-default\" value=\"Submit\"/>';
+	var button_string = '<button id=\"'+id+'\" type=\"button\" class=\"btn btn-default\">Submit</button>';
 	$("#query_addition").append(button_string);
 }
 
