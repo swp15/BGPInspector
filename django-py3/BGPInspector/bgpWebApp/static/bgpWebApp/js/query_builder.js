@@ -37,23 +37,34 @@ function retrieve_DataTypes(VAST_URL){
 }
 
 function start_flow_after_type_request(types){
-	fill_type_dropdown(types);
+	var selected_types = fill_type_dropdown(types);
+	console.log(selected_types);
+	var selected_types_structure = {};
+	for( type in selected_types){
+		selected_types_structure[type] = types[type];
+	}
+	var button_id = 'type_select_button';
+	build_types_submit_button(button_id);
+	$('#'+button_id).click(function(selected_types){ console.log('blub');});//selected_types_structure)});//some_function(selected_types_structure)});
 }	
 
 function fill_type_dropdown(choices_dic){
-	var html_string = "<select id=\"type_picker\" class=\"selectpicker\" multiple data-selected-text-format=\"count\">";
-	choices_dic['a'] = 'b';
-	console.log(choices_dic);
+	var html_string = "Select a type to use the query builder with corresponding fields<br>"
+		+ "<select id=\"type_picker\" class=\"selectpicker\" multiple data-selected-text-format=\"count\">";
 	for( var type_name in choices_dic){
-		console.log(type_name);
 		if(choices_dic.hasOwnProperty(type_name)) { 
 			html_string += '<option>'+type_name+'</option>';
 		}
 	}
-	html_string += '</select>';
-	console.log(html_string);
+	html_string += '</select><br>';
 	$("#query_addition").html(html_string);
 	$('.selectpicker').selectpicker();
+	return $('.selectpicker').val();
+}
+
+function build_types_submit_button(id){
+	var button_string = '<input id=\"'+id+' type=\"submit\" class=\"btn btn-default\" value=\"Submit\"/>';
+	$("#query_addition").append(button_string);
 }
 
 var headers = ["type", "timestamp", "source_ip", "source_as", "prefix", "as_path", "origin_as", "origin", "nexthop", "local_pref", "med", "community", "atomix_aggregate", "aggregator"];
