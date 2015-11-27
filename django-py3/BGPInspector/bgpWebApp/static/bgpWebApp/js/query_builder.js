@@ -97,7 +97,22 @@ $("#queryBuilderInfo").click(function(){
 
 function set_type_filters(types)
 {
+    // types  is dic mit keys typenamen (announcement, etc), values sind dic (keys field name) und
+    // value (fieldinhalt "kind" ist datentyp!)
+    types.forEach(function(type){
+        console.log(type);
+        type.forEach(function(type){
+            
+        }
 
+    }
+    for(var type in types){
+        console.log(type);
+        fields = types[type]
+        for(var field in fields){
+            console.log(field);
+        }
+    }
 }
 
 
