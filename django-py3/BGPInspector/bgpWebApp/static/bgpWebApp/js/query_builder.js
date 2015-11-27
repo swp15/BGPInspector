@@ -99,26 +99,107 @@ function set_type_filters(types)
 {
     // types  is dic mit keys typenamen (announcement, etc), values sind dic (keys field name) und
     // value (fieldinhalt "kind" ist datentyp!)
-    types.forEach(function(type){
-        console.log(type);
-        type.forEach(function(type){
-            
+    
+    filters = [];
+    known_fields = [];
+    for(var key in types){
+        type = types[key];
+        for(var f in type){
+            if(isInArray(f, known_fields)){
+                continue;
+            } else {
+                known_fields.push(f);
+            }
+            field = type[f];
+			filters.push(get_filter(f,field["kind"]));
         }
-
     }
-    for(var type in types){
-        console.log(type);
-        fields = types[type]
-        for(var field in fields){
-            console.log(field);
-        }
+	
+	console.log(filters);	
+    set_query_builder(filters);
+}
+
+function isInArray(str, arr)
+{
+    return arr.indexOf(str) > -1;
+}
+
+
+function get_filter(name,kind)
+{
+    
+    var f_name = get_filter_name(name,kind);
+    var filter_type = get_filter_type(kind);
+    var excl_ops = get_excluded_operators(kind);
+    var filter_itf = get_filter_interface(kind);
+    var value_conv = get_filter_value_conversion(kind);
+	filter = {filterName:name, "filterType":filter_type, field:f_name, filterLabel: name, excluded_operators: excl_ops,filter_interface:filter_itf, filter_value_conversion:value_conv};
+	return filter;
+}
+
+function get_filter_name(name,kind)
+{
+    switch(kind){
+        case "time_point":
+            return "&time";
+        default:
+            return name;
     }
 }
 
 
+function get_filter_type(kind)
+{
+    switch(kind) {
+        case "time_point":
+            return "date";
+        default:
+            return "text";
+    }
+}
+
+function get_excluded_operators(kind)
+{
+    switch(kind) {
+        case "time_point":
+            return operatorSet(["equal", "less", "greater","greater_or_equal"]);
+        default:
+            return operatorSet(['equal','not_equal']);
+    }
+}
+
+function get_filter_value_conversion(kind)
+{
+    switch(kind) {
+        case "time_point":
+            return {function_name:"convert_timestamp", args: [{"filter_value":"yes"}]};
+        default:
+            return {};
+
+    }
+}
+
+function get_filter_interface(kind)
+{
+    filter_itf = {};
+    switch(kind) {
+        case "time_point":
+            filter_itf["filter_element"] = "input";
+            filter_itf["filter_element_attributes"] = {type:"text",title:"Set the date and time using format: dd/mm/yyyy hh:mm:ss"};
+            filter_itf["filter_widget"] = "datetimepicker";
+            filter_itf["filter_widget_properties"] = {dateFormat:"dd/mm/yy", timeFormat: "HH:mm:ss", changeMonth:true, changeYear:true, showSecond:true};
+            return [filter_itf];
+        default:
+	        return [{filter_element: "input",filter_element_attributes :{"type":"text","value":"kek"}}];
+    }
+
+}
+
 function set_query_builder(filters)
 {
-	$("#builder").empty();
+	$("#builder").remove();
+    var new_div = '<div id="builder"></div>';
+    $("#builder_container").append(new_div);
 	$("#builder").jui_filter_rules({
 		bootstrap_version:"3",
 		filters: filters,
