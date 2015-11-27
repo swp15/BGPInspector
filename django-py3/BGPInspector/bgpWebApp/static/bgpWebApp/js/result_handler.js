@@ -1,3 +1,66 @@
+/* PAGES[n] enthaelt Rows fuer die n-te Seite*/
+var PAGES = [];
+var CURRENT_PAGE = 0;
+var ROWS_PER_PAGE = 50;
+
+$(document).ready(function(){
+$('#prevPage').css( 'cursor', 'pointer' );
+$('#nextPage').css( 'cursor', 'pointer' );
+$("#prevPage").click(previous_page);
+$("#nextPage").click(next_page);
+});
+
+
+function set_table_content(rows)
+{
+    $("#table").DataTable().clear();
+    $("#table").DataTable.rows.add(rows);
+    $("#table").DataTable.draw();
+}
+
+
+function previous_page()
+{
+    if(CURRENT_PAGE == 0){
+        return "NO PREVIOUS PAGE AVAILABLE";
+    }
+
+    CURRENT_PAGE--;
+    var rows = PAGES[CURRENT_PAGE];
+    set_table_content(rows);
+}
+
+function get_next(x)
+{
+    return [];
+}
+
+function next_page()
+{
+   var current = CURRENT_PAGE;
+   current++;
+   if(current in PAGES){
+        //If we already know this page, just display it and increase the counter
+        var rows = PAGES[current];
+        set_table_content(rows);
+        CURRENT_PAGE = current;
+   } else {
+        //Get new events from VAST
+        var rows = get_next(ROWS_PER_PAGE);
+        //No more events, current page is last page
+        if(rows.length == 0){
+            return "NO MORE EVENTS";
+        }
+
+        //Display them on the next page
+        set_table_content(rows);
+        CURRENT_PAGE = current;
+
+        //Save them for later
+        PAGES[CURRENT_PAGE] = rows;
+   }
+}
+
 function process_query(query, representation, headers){
 	send_query(query, representation, headers);
 }
