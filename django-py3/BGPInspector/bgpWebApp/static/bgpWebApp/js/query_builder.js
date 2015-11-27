@@ -22,10 +22,7 @@ function retrieve_DataTypes(VAST_URL){
 	})
 	.node(
 		'type', function(type){
-			fields = [];
-			for( var field in type.structure){
-				fields.push(field);
-			}
+			fields = type.structure;	
 			types[type.name] = fields;
 		}
 	)
@@ -40,7 +37,8 @@ function retrieve_DataTypes(VAST_URL){
 }
 
 function start_flow_after_type_request(types){
-	
+	fill_type_dropdown(types);
+}	
 
 function fill_type_dropdown(choices_dic){
 	var html_string = "<select id=\"type_picker\" class=\"selectpicker\" multiple data-selected-text-format=\"count\">";
