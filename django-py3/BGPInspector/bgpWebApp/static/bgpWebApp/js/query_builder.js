@@ -38,6 +38,9 @@ function retrieve_DataTypes(VAST_URL){
 
 function start_flow_after_type_request(types){
 	fill_type_dropdown(types);
+	dummy_filter = [{filterName:"Source AS", "filterType":"number", field: "source_as", filterLabel: "Source AS",excluded_operators: operatorSet(['equal','not_equal']),
+                filter_interface: [{filter_element: "input",filter_element_attributes: {"type": "text", "value": ""}}]}];
+	set_query_builder(dummy_filter);
 }	
 
 function fill_type_dropdown(choices_dic){
@@ -73,127 +76,24 @@ $("#queryBuilderInfo").click(function(){
 
 });
 
+function set_type_filters(types)
+{
 
-$(function() {
-    $("#builder").jui_filter_rules({
-        bootstrap_version: "3",
-        filters: [
-            {
-                filterName:"Local Pref.", "filterType":"text", field: "local_pref", filterLabel: "Local Pref.",
-                excluded_operators: operatorSet(['equal','not_equal']), 
-                filter_interface: [
-                    {
-                        filter_element: "input",
-                        filter_element_attributes: {"type": "text", "value": ""}
-                    }
-                ]
-            },
-            {
-                filterName:"Next Hop", "filterType":"text", field: "nexthop", filterLabel: "Next Hop",
-                excluded_operators: operatorSet(['equal','not_equal']), 
-                filter_interface: [
-                    {
-                        filter_element: "input",
-                        filter_element_attributes: {"type": "text", "value": ""}
-                    }
-                ]
-            },
-            {
-                filterName:"Origin", "filterType":"text", field: "origin", filterLabel: "Origin",
-                excluded_operators: operatorSet(['equal','not_equal']), 
-                filter_interface: [
-                    {
-                        filter_element: "input",
-                        filter_element_attributes: {"type": "text", "value": ""}
-                    }
-                ]
-            },
-            {
-                filterName:"Origin AS", "filterType":"text", field: "origin_as", filterLabel: "Origin AS",
-                excluded_operators: operatorSet(['equal','not_equal']), 
-                filter_interface: [
-                    {
-                        filter_element: "input",
-                        filter_element_attributes: {"type": "text", "value": ""}
-                    }
-                ]
-            },
-            {
-                filterName:"AS Path", "filterType":"text", field: "as_path", filterLabel: "AS Path",
-                excluded_operators: operatorSet(['equal','not_equal']), 
-                filter_interface: [
-                    {
-                        filter_element: "input",
-                        filter_element_attributes: {"type": "text", "value": ""}
-                    }
-                ]
-            },
-            {
-                filterName:"Prefix", "filterType":"text", field: "prefix", filterLabel: "Prefix",
-                excluded_operators: operatorSet(['equal','not_equal']), 
-                filter_interface: [
-                    {
-                        filter_element: "input",
-                        filter_element_attributes: {"type": "text", "value": ""}
-                    }
-                ]
-            },
-            {
-                filterName:"Source IP", "filterType":"text", field: "source_ip", filterLabel: "Source IP",
-                excluded_operators: operatorSet(['equal','not_equal']), 
-                filter_interface: [
-                    {
-                        filter_element: "input",
-                        filter_element_attributes: {"type": "text", "value": ""}
-                    }
-                ]
-            },
-            {
-                filterName:"Source AS", "filterType":"number", field: "source_as", filterLabel: "Source AS",
-                excluded_operators: operatorSet(['equal','not_equal']),
-                filter_interface: [
-                    {
-                        filter_element: "input",
-                        filter_element_attributes: {"type": "text", "value": ""}
-                    }
-                ]
-            }, 
-            {
-                filterName: "Time", "filterType": "date", field: "&time", filterLabel: "Time",
-                excluded_operators: ["is_null", "is_not_null", "in", "not_in", "greater"],
-                filter_interface: [
-                    {
-                        filter_element: "input",
-                        filter_element_attributes: {
-                            type: "text",
-                            title: "Set the date and time using format: dd/mm/yyyy hh:mm:ss"
-                        },
-                        filter_widget: "datetimepicker",
-                        filter_widget_properties: {
-                            dateFormat: "dd/mm/yy",
-                            timeFormat: "HH:mm:ss",
-                            changeMonth: true,
-                            changeYear: true,
-                            showSecond: true
-                        }
-                    }
-                ],
-                filter_value_conversion: {
-                    function_name: "convert_timestamp",
-                    args: [
-                        {"filter_value": "yes"}
-                    ]
-                },
-            },
-        ],
+}
+
+
+function set_query_builder(filters)
+{
+	$("#builder").empty();
+	$("#builder").jui_filter_rules({
+		bootstrap_version:"3",
+		filters: filters,
         onValidationError: function(event, data) {
             if(data.hasOwnProperty("elem_filter")) {
                 data.elem_filter.focus();
             }
-        },
- 
-    });
-});
+        }});
+}
 
 function processQuery(query,queryOpts){
     process_query(escape(query)+queryOpts, 'table', headers);
