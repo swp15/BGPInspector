@@ -22,46 +22,62 @@ function build_table( headers){
 	table.DataTable( {
 		'paging': false,
 		columns: cols
-	} );
-	oboe({
-		url: 'http://fabrice-ryba.ddns.net/daten_small.json',
-		method: "GET",
-		//headers: Object,
-		//body: Object,
-		//cached: Boolean,
-		withCredentials: false
-	})
-	.node(
-		'value', function(value) {
-			var data = value.data;
-			data['type'] = value['type'].substr(0,value['type'].indexOf(' '));;
-			var row = {};
-			headers.forEach(function(header){
-				if( (header in data) && data[header] != null){
-					var extracted_data = data[header];
-					if(header == 'timestamp'){
-						extracted_data = nano_secs_to_DateTime(extracted_data);
-					}
-					row[header] = extracted_data;
-				}
-				else{
-					row[header] = "";
-				}
-			})
-			var row_list = [];
-			for( var index=0; index<headers.length; index++){
-				row_list.push(row[headers[index]]);
-			}
-			console.log(row);
-			$('#table').DataTable().row.add(row_list).draw();	
-		}
-	)
-	.fail(
-		function(err){
-			console.log(err);
-	})		
+	});
 }
-	
+$(document).ready(function(){
+	var stuff = get_next(50, my_callback);
+	console.log(stuff);
+});
+
+function my_callback(next_list){
+	console.log(next_list);
+}
+
+function get_next( n, andreas_cb){
+	var jqxhr = $.getJSON(
+		'http://fabrice-ryba.ddns.net/daten_small.json1', 
+		function(data){
+			var next_list = process_query_result(data);
+			andreas_cb(next_list); 
+		})  
+		.fail(function() {
+    	console.log('error in json transmition');
+		});
+}
+
+function process_query_result(values) {
+	var return_list = [];
+	//console.log(values);
+	for( var i=0; i<values.length;i++){
+		var value = values[i].value;
+		//console.log(value);
+		var data = value.data;
+		data['type'] = value['type'].substr(0,value['type'].indexOf(' '));;
+		var row = {};
+		headers.forEach(function(header){
+			if( (header in data) && data[header] != null){
+				var extracted_data = data[header];
+				if(header == 'timestamp'){
+					extracted_data = nano_secs_to_DateTime(extracted_data);
+				}
+				row[header] = extracted_data;
+			}
+			else{
+				row[header] = "";
+			}
+		})
+		var row_list = [];
+		for( var index=0; index<headers.length; index++){
+			row_list.push(row[headers[index]]);
+		}
+		return_list.push(row_list);
+	}
+	//console.log(return_list);
+	return return_list;
+}
+
+function success(data, blub, bli){console.log('iaeu');}
+
 function make_jquery_element( id, dom_parent, element_name){
 	if ($('#'+id).length == 0){
 		//var div = $(element_name, {id: id});
