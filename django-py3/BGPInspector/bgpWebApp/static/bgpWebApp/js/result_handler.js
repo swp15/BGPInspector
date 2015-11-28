@@ -88,8 +88,7 @@ function build_table( headers){
 	});
 }
 $(document).ready(function(){
-	var stuff = get_next(50, my_callback);
-	console.log(stuff);
+	get_next(50, my_callback);
 });
 
 function my_callback(next_list){
@@ -97,6 +96,7 @@ function my_callback(next_list){
 }
 
 function get_next( n, andreas_cb){
+	// adjust to just fetch n
 	var jqxhr = $.getJSON(
 		'http://fabrice-ryba.ddns.net/daten_small.json1', 
 		function(data){
@@ -110,10 +110,8 @@ function get_next( n, andreas_cb){
 
 function process_query_result(values) {
 	var return_list = [];
-	//console.log(values);
 	for( var i=0; i<values.length;i++){
 		var value = values[i].value;
-		//console.log(value);
 		var data = value.data;
 		data['type'] = value['type'].substr(0,value['type'].indexOf(' '));;
 		var row = {};
@@ -135,15 +133,11 @@ function process_query_result(values) {
 		}
 		return_list.push(row_list);
 	}
-	//console.log(return_list);
 	return return_list;
 }
 
-function success(data, blub, bli){console.log('iaeu');}
-
 function make_jquery_element( id, dom_parent, element_name){
 	if ($('#'+id).length == 0){
-		//var div = $(element_name, {id: id});
 		var div = "<"+element_name+" id="+id+"></"+element_name+">";
 		$('#'+dom_parent).append(div);
 	}
