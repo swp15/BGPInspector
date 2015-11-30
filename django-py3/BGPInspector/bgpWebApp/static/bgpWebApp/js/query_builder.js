@@ -1,4 +1,3 @@
-var VAST_SERVER = 'http://mobi1.cpt.haw-hamburg.de:1080';
 var OPERATORS =  ['in','not_in','less','less_or_equal','greater','greater_or_equal','is_null','is_not_null','begins_with','not_begins_with','contains', 'not_contains','ends_with','not_ends_with','equal', 'not_equal', 'is_empty', 'is_not_empty'];
 
 retrieve_DataTypes(VAST_SERVER);
@@ -275,23 +274,8 @@ function convert_timestamp(ts) {
     return new_ts;
 }
 
-function getQueryOpts() {
-    $("#queryOptLimitWarningLabel").remove();
-    $("#queryOptCheckErrorLabel").remove();
-    var atLeastOne = false;
-    var result = "";
-    var error = false;
-    ["historical","continuous","unified"].forEach(function(entry) {
-        if ($("#"+entry)[0].checked){
-           atLeastOne = true; 
-           result += "&"+entry +"=true";
-        }
-    });
-    
-    if(!atLeastOne){
-        $("#queryOptCheck").prepend('<div id="queryOptCheckErrorLabel" class="label label-danger">Select at least one option</div>');
-        error = true;
-    }
+function getLimit()
+{
     var limit = parseInt($("#limit")[0].value);
     if(limit < 1 || limit > 1000){
         $("#queryOptLimit").append('<span id="queryOptLimitWarningLabel" class="label label-warning">Limit > 1000 may cause slow performance!</span>');
@@ -304,8 +288,28 @@ function getQueryOpts() {
     if(error){
         return "";
     }
-    result += "&limit=" + limit;
-    return result;
+    return limit;
+
+}
+
+function getQueryOpts() {
+    $("#queryOptLimitWarningLabel").remove();
+    $("#queryOptCheckErrorLabel").remove();
+    var atLeastOne = false;
+    var result = [];
+    var error = false;
+    ["historical","continuous","unified"].forEach(function(entry) {
+        if ($("#"+entry)[0].checked){
+           atLeastOne = true; 
+           result.push(entry);
+        }
+    });
+    
+    if(!atLeastOne){
+        $("#queryOptCheck").prepend('<div id="queryOptCheckErrorLabel" class="label label-danger">Select at least one option</div>');
+        error = true;
+    }
+    return result.toString();
 }
 function operatorSet(ops){
     var excluded_ops = [];
@@ -344,13 +348,14 @@ $("#send_query").click(function() {
   var a_rules = qb.jui_filter_rules("getRules", 0, []);
   var query = buildQuery(a_rules);
   var queryOpts = getQueryOpts();
+  var limit = getLimit();
  
   var value;
   if(isInvalid(query,queryOpts)) {
     $("#query_text").val("Invalid Query");
   } else{
-    $("#query_text").val(query+queryOpts);
-    send_query(escape(query)+queryOpts);
+    $("#query_text").val(query);
+    send_query(escape(query),queryOpts,limit);
   }
 
 });

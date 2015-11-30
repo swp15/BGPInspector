@@ -3,6 +3,10 @@ var PAGES = [];
 var CURRENT_PAGE = 0;
 var ROWS_PER_PAGE = 50;
 var TABLE_HEADERS;
+var CURRENT_ID;
+//var VAST_SERVER = 'http://mobi1.cpt.haw-hamburg.de:1080';
+var VAST_SERVER = 'http://fabrice-ryba.ddns.net/daten_small.json1';
+
 
 $(document).ready(function(){
     $('#prevPage').css( 'cursor', 'pointer' );
@@ -11,7 +15,6 @@ $(document).ready(function(){
     $("#nextPage").mousedown(function(e){ e.preventDefault(); });
     $("#prevPage").click(previous_page);
     $("#nextPage").click(next_page);
-    //build_table(['test','wat','test1']);
 });
 
 function build_table(headers){
@@ -29,17 +32,22 @@ function build_table(headers){
 	});
 }
 
-function send_query(query)
+function send_query(query,queryOpts, limit)
 {
-    //Send to /queries with POST, wait for response. get ID and then do get_next 
-    //to /queries/id/
+    $.post(VAST_SERVER+"/queries", "expression="+query+" type="+queryOpts+" limit="+limit, post_query_cb,"json");
+    
+}
+
+function post_query_cb(data, textStatus, jqXHR)
+{
+    CURRENT_ID = data["id"];
     get_next(ROWS_PER_PAGE,initial_get_next_cb);
 }
 
 function get_next( n, cb){
 	// adjust to just fetch n
 	var jqxhr = $.getJSON(
-		'http://fabrice-ryba.ddns.net/daten_small.json1', 
+		VAST_SERVER+"/queries/" + CURRENT_ID + "/results&n="+n, 
 		function(data){
 			var next_list = process_query_result(data);
 			cb(next_list); 
@@ -92,7 +100,6 @@ function set_table_content(rows)
         $("#table").DataTable().row.add(rows[i]).draw();
         
     }
-    //$("#table").DataTable().draw();
 }
 
 function previous_page()
