@@ -1,20 +1,19 @@
 #result {
-	width: 100%;
+	width: 95%;
 	margin-top:15px;
 	min-height: 100%;
 }
 
-#table_container {
-	min-height: 100%;
-	float: left;
-	width: 100%;	
-}
-
 #table {
-	border-width: 0.1em;
+	/*border-width: 0.1em;
 	border-style: solid; 
 	margin-top: 1em;
-	height: 40em;
+	height: 40em;*/
+}
+
+#table_info {
+    display:none;
+
 }
 
 #loading_bar_container {

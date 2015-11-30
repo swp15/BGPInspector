@@ -1,18 +1,7 @@
-/*
-var paras = 'ids=4556,4651,46,929';
-oboe({
-	url: 'fabrice-ryba.ddns.net',
-	method: 'POST',
-	withcredentials: false,
-	body: paras
-})
-.fail(
-	function(err){
-		console.log(err);
-	}
-)
-*/
-retrieve_DataTypes('http://mobi1.cpt.haw-hamburg.de:1080');
+var VAST_SERVER = 'http://mobi1.cpt.haw-hamburg.de:1080';
+var OPERATORS =  ['in','not_in','less','less_or_equal','greater','greater_or_equal','is_null','is_not_null','begins_with','not_begins_with','contains', 'not_contains','ends_with','not_ends_with','equal', 'not_equal', 'is_empty', 'is_not_empty'];
+
+retrieve_DataTypes(VAST_SERVER);
 function retrieve_DataTypes(VAST_URL){
 	var types = {};
 	oboe({
@@ -27,7 +16,7 @@ function retrieve_DataTypes(VAST_URL){
 		}
 	)
 	.done(function(){
-		start_flow_after_type_request(types);
+	    fill_type_dropdown(types);
 	})		
 	.fail(
 		function(err){
@@ -36,36 +25,14 @@ function retrieve_DataTypes(VAST_URL){
 	)
 }
 
-function start_flow_after_type_request(types){
-	fill_type_dropdown(types);
-	dummy_filter = [{filterName:"Source AS", "filterType":"number", field: "source_as", filterLabel: "Source AS",excluded_operators: operatorSet(['equal','not_equal']),
-                filter_interface: [{filter_element: "input",filter_element_attributes: {"type": "text", "value": ""}}]}];
-	set_query_builder(dummy_filter);
-}	
-
-function type_button_callback(types){
-	var selected_types = get_selected_types(types);
-	set_type_filters(selected_types);
-}
-
-function get_selected_types( types){	
-	var selected_types = $('.selectpicker').val();
-	var selected_types_structure = {};
-	selected_types.forEach(function	(type){
-		selected_types_structure[type] = types[type];
-	});
-	return selected_types_structure;
-}
-
 function fill_type_dropdown(choices_dic){
-	var html_string = "Select a type to use the query builder with corresponding fields<br>"
-		+ "<select id=\"type_picker\" class=\"selectpicker\" multiple data-selected-text-format=\"count\">";
+	var html_string = "<select id=\"type_picker\" class=\"selectpicker\" multiple data-selected-text-format=\"count\">";
 	for( var type_name in choices_dic){
 		if(choices_dic.hasOwnProperty(type_name)) { 
 			html_string += '<option>'+type_name+'</option>';
 		}
 	}
-	html_string += '</select><br>';
+	html_string += '</select>';
 	$("#query_addition").html(html_string);
 	$('.selectpicker').selectpicker();
 	var button_id = 'type_select_button';
@@ -74,33 +41,25 @@ function fill_type_dropdown(choices_dic){
 }
 
 function build_types_submit_button(id){
-	var button_string = '<button id=\"'+id+'\" type=\"button\" class=\"btn btn-default\">Submit</button>';
+	var button_string = '<button id=\"'+id+'\" type=\"button\" class=\"btn btn-default\">Init</button>';
 	$("#query_addition").append(button_string);
 }
 
-var headers = ["type", "timestamp", "source_ip", "source_as", "prefix", "as_path", "origin_as", "origin", "nexthop", "local_pref", "med", "community", "atomix_aggregate", "aggregator"];
+function type_button_callback(types){
+	var selected_types = get_selected_types(types);
+    var selected_fields = get_selected_fields(selected_types);
+	set_type_filters(selected_fields);
+    var headers = [];
+    for(var field in selected_fields){
+        headers.push(field);
+    }
+    build_table(headers);
+}
 
-var operators =  ['in','not_in','less','less_or_equal','greater','greater_or_equal','is_null','is_not_null','begins_with','not_begins_with','contains', 'not_contains','ends_with','not_ends_with','equal', 'not_equal', 'is_empty', 'is_not_empty'];
-
-
-$("#queryBuilderInfo").click(function(){
-    var info = "Create a <a href='https://github.com/mavam/vast' class='alert-link'>VAST</a> query by grouping rules. A <i>all rules</i> group " +
-               "represents a conjunction of the group elements, a <i>any rule</i> group a disjunction. A group element is a rule or another group.";
-    $("#queryBuilderInfoAlert").remove();
-    $("#main").prepend('<div id="queryBuilderInfoAlert" class="alert alert-info alert-dismissible" role="alert">' +
-                            '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
-                            info+
-                        '</div>'
-    );
-
-});
-
-function set_type_filters(types)
+function get_selected_fields(types)
 {
-    // types  is dic mit keys typenamen (announcement, etc), values sind dic (keys field name) und
-    // value (fieldinhalt "kind" ist datentyp!)
-    
-    filters = [];
+    //Iterate over types and look for duplicates
+    selected_fields = {};
     known_fields = [];
     for(var key in types){
         type = types[key];
@@ -110,24 +69,33 @@ function set_type_filters(types)
             } else {
                 known_fields.push(f);
             }
-            field = type[f];
-			filters.push(get_filter(f,field["kind"]));
+            selected_fields[f] = type[f];
         }
     }
-	
-	console.log(filters);	
+    return selected_fields;
+}
+
+function get_selected_types( types)
+{	
+	var selected_types = $('.selectpicker').val();
+	var selected_types_structure = {};
+	selected_types.forEach(function	(type){
+		selected_types_structure[type] = types[type];
+	});
+	return selected_types_structure;
+}
+
+function set_type_filters(fields)
+{
+    filters = [];
+    for(var key in fields){
+			filters.push(get_filter(key,fields[key]["kind"]));
+    }
     set_query_builder(filters);
 }
 
-function isInArray(str, arr)
-{
-    return arr.indexOf(str) > -1;
-}
-
-
 function get_filter(name,kind)
 {
-    
     var f_name = get_filter_name(name,kind);
     var label  = get_filter_label(name);
     var filter_type = get_filter_type(kind);
@@ -138,6 +106,23 @@ function get_filter(name,kind)
         filter[filter_value_conversion] = get_filter_value_conversion(kind);
     }
 	return filter;
+}
+
+function set_query_builder(filters)
+{
+    var qb = $("#builder");
+    qb.jui_filter_rules('destroy');
+    qb.remove();
+    var new_div = '<div id="builder"></div>';
+    $("#builder_container").append(new_div);
+	$("#builder").jui_filter_rules({
+		bootstrap_version:"3",
+		filters: filters,
+        onValidationError: function(event, data) {
+            if(data.hasOwnProperty("elem_filter")) {
+                data.elem_filter.focus();
+            }
+        }});
 }
 
 function get_filter_name(name,kind)
@@ -163,10 +148,6 @@ function get_filter_label(name)
     return result;
 }
 
-function capitalize(s)
-{
-    return s[0].toUpperCase() + s.slice(1);
-}
 function get_filter_type(kind)
 {
     switch(kind) {
@@ -216,47 +197,12 @@ function get_filter_interface(kind)
 
 }
 
-function set_query_builder(filters)
-{
-    var qb = $("#builder");
-    qb.jui_filter_rules('destroy');
-    qb.remove();
-    var new_div = '<div id="builder"></div>';
-    $("#builder_container").append(new_div);
-	$("#builder").jui_filter_rules({
-		bootstrap_version:"3",
-		filters: filters,
-        onValidationError: function(event, data) {
-            if(data.hasOwnProperty("elem_filter")) {
-                data.elem_filter.focus();
-            }
-        }});
-}
 
-function processQuery(query,queryOpts){
-    process_query(escape(query)+queryOpts, 'table', headers);
-}
 
 function isInvalid(query,queryOpts) {
     return query == "" || queryOpts == "";
 }
 
-$("#send_query").click(function() {
-  var qb = $("#builder");
-  var a_rules = qb.jui_filter_rules("getRules", 0, []);
-  console.log("FUCK");
-  var query = buildQuery(a_rules);
-  var queryOpts = getQueryOpts();
- 
-  var value;
-  if(isInvalid(query,queryOpts)) {
-    $("#query_text").val("Invalid Query");
-  } else{
-    $("#query_text").val(query+queryOpts);
-    processQuery(query,queryOpts);
-  }
-
-});
 
 
 function buildQuery(rules){
@@ -363,7 +309,7 @@ function getQueryOpts() {
 }
 function operatorSet(ops){
     var excluded_ops = [];
-    operators.forEach(function(entry){
+    OPERATORS.forEach(function(entry){
         if(ops.indexOf(entry) < 0){
             excluded_ops.push(entry);
         }   
@@ -371,4 +317,40 @@ function operatorSet(ops){
     return excluded_ops;
 }
 
+function capitalize(s)
+{
+    return s[0].toUpperCase() + s.slice(1);
+}
 
+function isInArray(str, arr)
+{
+    return arr.indexOf(str) > -1;
+}
+
+$("#queryBuilderInfo").click(function(){
+    var info = "Create a <a href='https://github.com/mavam/vast' class='alert-link'>VAST</a> query by grouping rules. A <i>all rules</i> group " +
+               "represents a conjunction of the group elements, a <i>any rule</i> group a disjunction. A group element is a rule or another group.";
+    $("#queryBuilderInfoAlert").remove();
+    $("#main").prepend('<div id="queryBuilderInfoAlert" class="alert alert-info alert-dismissible" role="alert">' +
+                            '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
+                            info+
+                        '</div>'
+    );
+
+});
+
+$("#send_query").click(function() {
+  var qb = $("#builder");
+  var a_rules = qb.jui_filter_rules("getRules", 0, []);
+  var query = buildQuery(a_rules);
+  var queryOpts = getQueryOpts();
+ 
+  var value;
+  if(isInvalid(query,queryOpts)) {
+    $("#query_text").val("Invalid Query");
+  } else{
+    $("#query_text").val(query+queryOpts);
+    send_query(escape(query)+queryOpts);
+  }
+
+});
