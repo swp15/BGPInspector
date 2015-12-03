@@ -2,7 +2,6 @@
 <html lang="en">
 	<head>
 		<meta charset="UTF-8"/>
-		<!--meta http-equiv="X-Frame-Options" content="sameorigin"/-->
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 
 		<title>BGPI-{% block title %}{% endblock %}</title>
@@ -12,52 +11,34 @@
 		<link rel="stylesheet" type="text/css" href="{% static 'bgpWebApp/css/base.css' %}" />
 
 		<!-- jquery -->
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-        <!-- <script src="{% static 'bgpWebApp/js/libs/jquery.min.js' %}"></script>  -->
-	
+		<script type="text/javascript" src="{% static 'bgpWebApp/js/libs/jquery.min.js' %}"></script>
+
 		<!-- Bootstrap -->
-		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"/>
-		<!-- <link rel="stylesheet" type="text/css" href="{% static
-             'bgpWebApp/css/libs/bootstrap.min.css' %}" /> -->
-		<script type="text/javascript" src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-		<!-- <script type="text/javascript" src="{% static 'bgpWebApp/js/libs/bootstrap.min.js'
-             %}"></script> -->
+		<link rel="stylesheet" type="text/css" href="{% static 'bgpWebApp/css/libs/bootstrap.min.css' %}" />
+		<script type="text/javascript" src="{% static 'bgpWebApp/js/libs/bootstrap.min.js' %}"></script>
+
+		<!-- Alert -->
 		<script type="text/javascript" src="{% static 'bgpWebApp/js/libs/alert.js' %}"></script>
 
         <!-- Moment JS -->
 		<script type="text/javascript" src="{% static 'bgpWebApp/js/libs/moment.js' %}"></script>
-        <!-- <script src="http://momentjs.com/downloads/moment.js"></script> -->
 
         <!-- JqueryUI -->
-        <!-- <link rel="stylesheet"
-             href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
-             -->
 		<link rel="stylesheet" type="text/css" href="{% static 'bgpWebApp/css/libs/jquery-ui.css' %}" />
-        <!-- <script
-        src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script> -->
 		<script type="text/javascript" src="{% static 'bgpWebApp/js/libs/jquery-ui.min.js' %}"></script>
 
         <!-- JqueryUI timepicker addon -->
-        <!-- <link rel="stylesheet" type="text/css"
-        href="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.4.5/jquery-ui-timepicker-addon.min.css"/>-->
 		<link rel="stylesheet" type="text/css" href="{% static 'bgpWebApp/css/libs/jquery-ui-timepicker-addon.min.css' %}" />
-
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.4.5/jquery-ui-timepicker-addon.min.js"></script>
 		<script type="text/javascript" src="{% static 'bgpWebApp/js/libs/jquery-ui-timepicker-addon.min.js' %}"></script>
 
         <!-- JUI Filter rules -->
-        <link rel="stylesheet" href="{% static 'bgpWebApp/js/jui_filter_rules/minified/jquery.jui_filter_rules.bs.min.css' %}"/>
-        <script src="{% static 'bgpWebApp/js/jui_filter_rules/jquery.jui_filter_rules.js' %}"></script> 
-        <script src="{% static 'bgpWebApp/js/jui_filter_rules/minified/localization/en.min.js' %}"></script>
-
-        <!-- Chunky.js -->
-        <script src="{% static 'bgpWebApp/js/libs/chunky.js' %}"></script>
-
+        <link rel="stylesheet" href="{% static 'bgpWebApp/js/libs/jui_filter_rules/minified/jquery.jui_filter_rules.bs.min.css' %}"/>
+        <script src="{% static 'bgpWebApp/js/libs/jui_filter_rules/jquery.jui_filter_rules.js' %}"></script>
+        <script src="{% static 'bgpWebApp/js/libs/jui_filter_rules/minified/localization/en.min.js' %}"></script>
 		{% block headers %}
 		{% endblock %}
 	</head>
 	<body>
-		
 		<div id="header" >
 			<div class="col-sm-12">
 				<nav role="navigation" class="navbar navbar-inverse navbar-fixed-top">

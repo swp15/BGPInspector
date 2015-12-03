@@ -6,19 +6,8 @@ var TABLE_HEADERS;
 var CURRENT_ID;
 //var VAST_SERVER = 'http://mobi1.cpt.haw-hamburg.de:1080';
 //var VAST_SERVER = 'http://fabrice-ryba.ddns.net/daten_small.json1';
-var VAST_SERVER = 'http://localhost:8000';
 
 
-$(document).ready(function(){
-    $('#prevPage').css( 'cursor', 'pointer' );
-	$("#prevPage").css("display","none");
-    $('#nextPage').css( 'cursor', 'pointer' );
-    $("#prevPage").mousedown(function(e){ e.preventDefault(); });
-    $("#nextPage").mousedown(function(e){ e.preventDefault(); });
-    $("#prevPage").click(previous_page);
-    $("#nextPage").click(next_page);
-	set_page_num(CURRENT_PAGE);
-});
 
 function build_table(headers){
     headers.push('type');

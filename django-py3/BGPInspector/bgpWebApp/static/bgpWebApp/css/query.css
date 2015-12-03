@@ -34,3 +34,12 @@ td {
 	margin-top: 2em;
 	float: left;
 }
+
+#prevPage {
+    cursor:pointer;
+}
+
+#nextPage {
+    cursor:pointer;
+}
+
