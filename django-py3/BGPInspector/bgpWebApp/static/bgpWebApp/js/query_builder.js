@@ -170,6 +170,10 @@ function get_excluded_operators(kind)
             return operatorSet(["equal", "less", "greater","greater_or_equal"]);
         case "vector":
 			return operatorSet(["equal","not_equal","contains","not_contains"]);
+        case "address":
+			return operatorSet(["equal","not_equal","in","not_in"]);
+        case "subnet":
+			return operatorSet(["equal","not_equal","contains","not_contains","in","not_in"]);
         default:
             return operatorSet(['equal','not_equal']);
     }
@@ -266,20 +270,30 @@ function ruleToQueryExpr(rule) {
     var result;
     switch(FIELD_KIND[field]){
       case 'vector':
-           if(op == 'in'){
-               result = '('+value+' in '+ field +')';
+           if(op == 'in' || op == '!in'){
+               result = '('+value+' '+op+' '+ field +')';
                break;
            } 
-      //     if(op == "
+      case 'address':
+           if(op == 'in' || op == '!in'){
+               result = '('+ field + ' '+op+' '+ value +')';
+               break;
+           } 
+      case 'subnet':
+           if(op == 'in' || op == '!in'){
+               result = '('+ field + ' '+op+' '+ value +')';
+               break;
+           } 
       default:
            result = "("+field+op+value+")";
     }    
-
-    return result;
+    return '('+field+' ' + op + ' ' + value + ')';
+    //return result;
 }
 
 function translateOperator(op) { 
-    operators = {'contains':'in','equal':'==', 'not_equal':'!=', 'less':'<','less_or_equal':'<=','greater_or_equal':'>=','greater':'>'};
+    console.log(op);
+    operators = {'in':'in','not_in':'!in','not_contains':'!ni','contains':'ni','equal':'==', 'not_equal':'!=', 'less':'<','less_or_equal':'<=','greater_or_equal':'>=','greater':'>'};
     return operators[op];
 }
 
