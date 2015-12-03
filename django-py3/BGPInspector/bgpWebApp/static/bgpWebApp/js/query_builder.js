@@ -1,10 +1,11 @@
 var OPERATORS =  ['in','not_in','less','less_or_equal','greater','greater_or_equal','is_null','is_not_null','begins_with','not_begins_with','contains', 'not_contains','ends_with','not_ends_with','equal', 'not_equal', 'is_empty', 'is_not_empty'];
+var FIELD_KIND = {};
 
 retrieve_DataTypes(VAST_SERVER);
 function retrieve_DataTypes(VAST_URL){
 	var types = {};
 	oboe({
-		url: VAST_URL + '/api/v1/types',
+		url: VAST_URL + '/types',
 		method: 'GET',
 		withcredentials: false
 	})
@@ -86,9 +87,12 @@ function get_selected_types( types)
 
 function set_type_filters(fields)
 {
-    filters = [];
+    var filters = [];
+    var filter;
     for(var key in fields){
-			filters.push(get_filter(key,fields[key]["kind"]));
+            filter = get_filter(key,fields[key]["kind"]);
+            FIELD_KIND[key] = fields[key]["kind"];
+			filters.push(filter);
     }
     set_query_builder(filters);
 }
@@ -100,9 +104,9 @@ function get_filter(name,kind)
     var filter_type = get_filter_type(kind);
     var excl_ops = get_excluded_operators(kind);
     var filter_itf = get_filter_interface(kind);
-	filter = {filterName:name, "filterType":filter_type, field:f_name, filterLabel: label, excluded_operators: excl_ops,filter_interface:filter_itf};
-    if(kind == "date"){
-        filter[filter_value_conversion] = get_filter_value_conversion(kind);
+    filter = {filterName:name, "filterType":filter_type, field:f_name, filterLabel: label, excluded_operators: excl_ops,filter_interface:filter_itf};
+    if(kind == "time_point"){
+        filter["filter_value_conversion"] = get_filter_value_conversion(kind);
     }
 	return filter;
 }
@@ -164,6 +168,8 @@ function get_excluded_operators(kind)
     switch(kind) {
         case "time_point":
             return operatorSet(["equal", "less", "greater","greater_or_equal"]);
+        case "vector":
+			return operatorSet(["equal","not_equal","contains","not_contains"]);
         default:
             return operatorSet(['equal','not_equal']);
     }
@@ -257,12 +263,23 @@ function ruleToQueryExpr(rule) {
     var field = condition['field'];
     var value = condition['filterValue'][0];
     var op = translateOperator(condition['operator']);
-    var result = "("+field+op+value+")";
+    var result;
+    switch(FIELD_KIND[field]){
+      case 'vector':
+           if(op == 'in'){
+               result = '('+value+' in '+ field +')';
+               break;
+           } 
+      //     if(op == "
+      default:
+           result = "("+field+op+value+")";
+    }    
+
     return result;
 }
 
 function translateOperator(op) { 
-    operators = {'equal':'==', 'not_equal':'!=', 'less':'<','less_or_equal':'<=','greater_or_equal':'>='};
+    operators = {'contains':'in','equal':'==', 'not_equal':'!=', 'less':'<','less_or_equal':'<=','greater_or_equal':'>=','greater':'>'};
     return operators[op];
 }
 
@@ -284,12 +301,7 @@ function getLimit()
     if(isNaN(limit)){
         limit = 1000;
     }
-
-    if(error){
-        return "";
-    }
     return limit;
-
 }
 
 function getQueryOpts() {
@@ -355,7 +367,9 @@ $("#send_query").click(function() {
     $("#query_text").val("Invalid Query");
   } else{
     $("#query_text").val(query);
-    send_query(escape(query),queryOpts,limit);
+    esc_query = escape(query);
+    replaced_query = esc_query.replace('+','%2B');
+    send_query(replaced_query,queryOpts,limit);
   }
 
 });

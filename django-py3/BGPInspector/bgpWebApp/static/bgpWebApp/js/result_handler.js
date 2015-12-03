@@ -5,36 +5,44 @@ var ROWS_PER_PAGE = 50;
 var TABLE_HEADERS;
 var CURRENT_ID;
 //var VAST_SERVER = 'http://mobi1.cpt.haw-hamburg.de:1080';
-var VAST_SERVER = 'http://fabrice-ryba.ddns.net/daten_small.json1';
+//var VAST_SERVER = 'http://fabrice-ryba.ddns.net/daten_small.json1';
+var VAST_SERVER = 'http://localhost:8000';
 
 
 $(document).ready(function(){
     $('#prevPage').css( 'cursor', 'pointer' );
+	$("#prevPage").css("display","none");
     $('#nextPage').css( 'cursor', 'pointer' );
     $("#prevPage").mousedown(function(e){ e.preventDefault(); });
     $("#nextPage").mousedown(function(e){ e.preventDefault(); });
     $("#prevPage").click(previous_page);
     $("#nextPage").click(next_page);
+	set_page_num(CURRENT_PAGE);
 });
 
 function build_table(headers){
+    headers.push('type');
+	var table_id = 'table'; 
+	var table = $('#'+table_id);
+    if(isDataTable(table[0])){
+		table.DataTable().destroy();
+		table.empty();
+	}
     TABLE_HEADERS = headers;
 	var cols = [];
-	var table_id = 'table'; 
 	for( var index=0; index<headers.length; index++){
-		cols.push( { 'title': headers[index]});
+		cols.push( { 'title': headers[index], className:"dt-left"});
 	}
-	var table = $('#'+table_id);
-	table.width
 	table.DataTable( {
 		'paging': false,
-		columns: cols
+        "autoWidth": false,
+	    columns: cols
 	});
 }
 
 function send_query(query,queryOpts, limit)
 {
-    $.post(VAST_SERVER+"/queries", "expression="+query+" type="+queryOpts+" limit="+limit, post_query_cb,"json");
+    $.post(VAST_SERVER+"/queries", "expression="+query+"&type="+queryOpts+"&limit="+limit, post_query_cb,"json");
     
 }
 
@@ -45,24 +53,25 @@ function post_query_cb(data, textStatus, jqXHR)
 }
 
 function get_next( n, cb){
-	// adjust to just fetch n
-	var jqxhr = $.getJSON(
-		VAST_SERVER+"/queries/" + CURRENT_ID + "/results&n="+n, 
-		function(data){
-			var next_list = process_query_result(data);
-			cb(next_list); 
-		})  
-		.fail(function() {
-    	console.log('error in json transmition');
-		});
+	var rows = [];
+    var url = VAST_SERVER+"/queries/" + CURRENT_ID + "?n="+n;
+	oboe(url).node('results.*',function(result) {
+        console.log("Got result");
+		var row = process_query_result(result.value);
+		rows.push(row);
+		$("#table").DataTable().row.add(row).draw();
+	}).node('status.*',function(stat) {
+        console.log("Got Status");
+    }).done(function(d){
+        console.log("DONE");
+		cb(rows);
+	});
 }
 
-function process_query_result(values) {
-	var return_list = [];
-	for( var i=0; i<values.length;i++){
-		var value = values[i].value;
+function process_query_result(value)
+{
 		var data = value.data;
-		data['type'] = value['type'].substr(0,value['type'].indexOf(' '));;
+        data['type'] = value['type']['name'];
 		var row = {};
         var headers = TABLE_HEADERS;
 		headers.forEach(function(header){
@@ -81,7 +90,13 @@ function process_query_result(values) {
 		for( var index=0; index<headers.length; index++){
 			row_list.push(row[headers[index]]);
 		}
-		return_list.push(row_list);
+		return row_list;
+}
+
+function process_query_results(values) {
+	var return_list = [];
+	for( var i=0; i<values.length;i++){
+		return_list.push(process_query_result(values[i].value));
 	}
 	return return_list;
 }
@@ -89,32 +104,38 @@ function process_query_result(values) {
 function initial_get_next_cb(rows){
     CURRENT_PAGE = 0
     PAGES[CURRENT_PAGE] = rows;
-    rows[0][0] = CURRENT_PAGE;
     set_table_content(rows);
 }
 
 function set_table_content(rows)
 {
-    $("#table").DataTable().clear();
+    $("#table").DataTable().clear().draw();
     for(var i in rows) {
         $("#table").DataTable().row.add(rows[i]).draw();
-        
     }
+}
+
+function set_page_num(n)
+{
+	$("#pageNum").text(n);
 }
 
 function previous_page()
 {
-    if(CURRENT_PAGE == 0){
-        return "NO PREVIOUS PAGE AVAILABLE";
-    }
-
     CURRENT_PAGE--;
-    var rows = PAGES[CURRENT_PAGE];
+	if(CURRENT_PAGE == 0){
+		$("#prevPage").css("display","none");
+	} else {
+		$("#prevPage").css("display","");
+    }
+   	var rows = PAGES[CURRENT_PAGE];
     set_table_content(rows);
+	set_page_num(CURRENT_PAGE);
 }
 
 function next_page()
 {
+   $("#prevPage").css("display","");
    var current = CURRENT_PAGE;
    current++;
    if(current in PAGES){
@@ -122,11 +143,8 @@ function next_page()
         var rows = PAGES[current];
         set_table_content(rows);
         CURRENT_PAGE = current;
+   		set_page_num(CURRENT_PAGE);
    } else {
-        //Get new events from VAST
-        //Pass callback, callback should:
-        //1. Events came in OK:
-        //  Set new page (
         var rows = get_next(ROWS_PER_PAGE, load_next_page_cb);
    }
 }
@@ -135,8 +153,8 @@ function load_next_page_cb(rows)
 {
     CURRENT_PAGE++;
     PAGES[CURRENT_PAGE] = rows;
-    rows[0][0] = CURRENT_PAGE;
     set_table_content(rows);
+	set_page_num(CURRENT_PAGE);	
 }
 
 function nano_secs_to_DateTime(nano_secs){
@@ -145,4 +163,17 @@ function nano_secs_to_DateTime(nano_secs){
 	return date;
 }
 
+
+function isDataTable ( nTable )
+{
+    var settings = $.fn.dataTableSettings;
+    for ( var i=0, iLen=settings.length ; i<iLen ; i++ )
+    {
+        if ( settings[i].nTable == nTable )
+        {
+            return true;
+        }
+    }
+    return false;
+}
 	
