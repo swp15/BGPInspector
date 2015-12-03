@@ -1,6 +1,3 @@
-/**
- * Created by ponken on 12/3/15.
- */
 var VAST_SERVER = 'http://localhost:8000';
 var OPERATORS =  ['in','not_in','less','less_or_equal','greater','greater_or_equal','is_null','is_not_null','begins_with','not_begins_with','contains', 'not_contains','ends_with','not_ends_with','equal', 'not_equal', 'is_empty', 'is_not_empty'];
 var FIELD_KIND = {};
@@ -13,23 +10,21 @@ $(document).ready(function(){
     set_page_num(CURRENT_PAGE);
     retrieve_DataTypes(VAST_SERVER);
     $("#send_query").click(function() {
-        var qb = $("#builder");
-        var a_rules = qb.jui_filter_rules("getRules", 0, []);
+        var a_rules = $("#builder").jui_filter_rules("getRules", 0, []);
         var query = buildQuery(a_rules);
         var queryOpts = getQueryOpts();
         var limit = getLimit();
-
-        var value;
         if(isInvalid(query,queryOpts)) {
             $("#query_text").val("Invalid Query");
         } else{
             $("#query_text").val(query);
-            esc_query = escape(query);
-            replaced_query = esc_query.replace('+','%2B');
+            var esc_query = escape(query);
+            var replaced_query = esc_query.replace('+','%2B');
             send_query(replaced_query,queryOpts,limit);
         }
-
     });
+
+    /* Info Box*/
     $("#queryBuilderInfo").click(function(){
         var info = "Create a <a href='https://github.com/mavam/vast' class='alert-link'>VAST</a> query by grouping rules. A <i>all rules</i> group " +
             "represents a conjunction of the group elements, a <i>any rule</i> group a disjunction. A group element is a rule or another group.";
@@ -39,7 +34,6 @@ $(document).ready(function(){
             info+
             '</div>'
         );
-
     });
 });
 
