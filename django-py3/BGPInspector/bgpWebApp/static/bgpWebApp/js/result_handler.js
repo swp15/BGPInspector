@@ -31,8 +31,11 @@ function build_table(headers){
 
 function send_query(query,queryOpts, limit)
 {
-    $.post(VAST_SERVER+"/queries", "expression="+query+"&type="+queryOpts+"&limit="+limit, post_query_cb,"json");
-    
+    $.post(VAST_SERVER+"/queries", "expression="+query+"&type="+queryOpts+"&limit="+limit, post_query_cb,"json")
+			.fail(function() {
+				$("#table").DataTable().clear();
+				alert('VAST rejected this query (bad syntax)');
+			});
 }
 
 function post_query_cb(data, textStatus, jqXHR)
