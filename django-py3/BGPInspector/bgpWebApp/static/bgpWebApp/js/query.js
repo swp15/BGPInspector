@@ -1,4 +1,4 @@
-var VAST_SERVER = 'http://localhost:8000';
+var VAST_SERVER = 'http://mobi1.cpt.haw-hamburg.de:1080'//'http://localhost:8000';
 var OPERATORS =  ['in','not_in','less','less_or_equal','greater','greater_or_equal','is_null','is_not_null','begins_with','not_begins_with','contains', 'not_contains','ends_with','not_ends_with','equal', 'not_equal', 'is_empty', 'is_not_empty'];
 var FIELD_KIND = {};
 $(document).ready(function(){
