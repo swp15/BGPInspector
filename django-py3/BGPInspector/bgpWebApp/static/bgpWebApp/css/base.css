@@ -39,6 +39,12 @@ body {
 	text-align: center;
 }
 
+.active_link > a,
+.active_link > a:hover,
+.active_link > a:focus {
+	color: #009999 !important;
+}
+
 #rowMaker {
 	min-height: 100%;
 }
